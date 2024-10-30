@@ -1,0 +1,46 @@
+[package]
+name = "axum-graphql"
+version = "0.1.0"
+edition = "2021"
+license = "BSD-3-Clause"
+repository = "https://github.com/rodneylab/axum-graphql"
+rust-version = "1.64.0"
+description = "Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx."
+
+# Faster cargo check and cargo build
+# See: https://github.com/launchbadge/sqlx#compile-time-verification
+[profile.dev.package.sqlx-macros]
+opt-level = 3
+
+[profile.release]
+codegen-units = 1
+lto = true
+strip = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+anyhow = "1.0.89"
+async-graphql = "7.0.11"
+async-graphql-axum = "7.0.11"
+axum = "0.7.7"
+dotenvy = "0.15.7"
+metrics = "0.24"
+metrics-exporter-prometheus = "0.16.0"
+opentelemetry = "0.26.0"
+opentelemetry-otlp = { version = "0.26.0", features = ["grpc-tonic"] }
+opentelemetry-semantic-conventions = "0.26.0"
+opentelemetry_sdk = { version = "0.26.0", features = ["rt-tokio"] }
+serde = { version = "1.0.210", features = ["derive"] }
+sqlx = { version = "0.8.2", features = ["runtime-tokio-rustls", "sqlite"] }
+tokio = { version = "1.40.0", features = ["full"] }
+tower-http = { version = "0.6.1", features = ["compression-br", "compression-gzip", "fs", "timeout"] }
+tracing = "0.1.40"
+tracing-opentelemetry = "0.27.0"
+tracing-subscriber = { version = "0.3.18", features = ["std", "env-filter"] }
+
+[dev-dependencies]
+http-body-util = "0.1.2"
+mime = "0.3.17"
+serde_json = "1.0"
+tower = { version = "0.5.1", features = ['util'] }

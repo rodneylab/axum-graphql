@@ -1,0 +1,34 @@
+services:
+  jaeger-collector:
+    image: jaegertracing/jaeger-collector:1.62.0@sha256:8d96eeb6c6da554c0d7964d1ae5046e6f78f745a5fb89253224e684f21a45774
+    command:
+      - "--cassandra.keyspace=jaeger_v1_dc1"
+      - "--cassandra.servers=cassandra"
+      - "--collector.otlp.enabled=true"
+      - "--collector.otlp.grpc.host-port=:4317"
+      - "--collector.otlp.http.host-port=:4318"
+    environment:
+      - SAMPLING_CONFIG_TYPE=adaptive
+    ports:
+      - '4317:4317'
+      - '4318:4318'
+    restart: on-failure
+    depends_on:
+      - cassandra-schema
+  cassandra:
+    image: cassandra:5.0.2@sha256:4f53edaa4580f6f9575f5e2a9931878fad2f7064e39e1a62899fdc3231e19aef
+  cassandra-schema:
+    image: jaegertracing/jaeger-cassandra-schema:1.62.0@sha256:8836a0806c4863eea60df00c835f1514955ec134d71d0be8a9e49ee53c7f7431
+    depends_on:
+      - cassandra
+  jaeger-query:
+    image: jaegertracing/jaeger-query:1.62.0@sha256:f2914dff723b68c4b96daf8ea8d8f308c9684046369f3202f6b0b89e9d937109
+    command:
+      - "--cassandra.keyspace=jaeger_v1_dc1"
+      - "--cassandra.servers=cassandra"
+    ports:
+      - '16686:16686'
+      - '16687:16687'
+    restart: on-failure
+    depends_on:
+      - cassandra-schema
