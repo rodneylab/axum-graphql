@@ -3,3 +3,4 @@
 rusty-tags.vi
 video.tape
 *.profraw
+sqlite.db*

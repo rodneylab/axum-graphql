@@ -105,5 +105,4 @@ The repo is just intended as a reference to speed up creating am Axum-based Grap
 
 ## ☎️ Issues
 
-Feel free to jump into the
-[Rodney Lab matrix chat room](https://matrix.to/#/%23rodney:matrix.org).
+# Feel free to jump into the[Rodney Lab matrix chat room](https://matrix.to/#/%23rodney:matrix.org).
