@@ -8,7 +8,7 @@ permissions:
   contents: read
 env:
   SQLX_VERSION: 0.8.2
-  SQLX_FEATURES: "runtime-tokio-rustls,sqlite"
+  SQLX_FEATURES: "rustls,sqlite"
 jobs:
   pre-commit:
     runs-on: ubuntu-latest
