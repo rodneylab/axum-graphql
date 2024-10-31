@@ -27,7 +27,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@4f366e621dc8fa63f557ca04b8f4361824a35a45 # stable
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
-        run: / cargo install sqlx-cli --force--version --version=${{ env.SQX_VERSION}} --features=${{ env.SQX_FEATURES}} --no-default-features --locked
+        run: cargo install sqlx-cli --force--version --version=${{ env.SQX_VERSION}} --features=${{ env.SQX_FEATURES}} --no-default-features --locked
       - uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5.3.0
         with:
           python-version: '3.13'

@@ -33,7 +33,7 @@ jobs:
       - uses: dtolnay/rust-toolchain@4f366e621dc8fa63f557ca04b8f4361824a35a45 # stable
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
-        run: / cargo install sqlx-cli --force--version --version=${{ env.SQX_VERSION}} --features=${{ env.SQX_FEATURES}} --no-default-features --locked
+        run: cargo install sqlx-cli --force--version --version=${{ env.SQX_VERSION}} --features=${{ env.SQX_FEATURES}} --no-default-features --locked
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Migrate database
         run: ./scripts/init_db.sh
@@ -86,7 +86,7 @@ jobs:
           components: clippy
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
-        run: / cargo install sqlx-cli --force--version --version=${{ env.SQX_VERSION}} --features=${{ env.SQX_FEATURES}} --no-default-features --locked
+        run: cargo install sqlx-cli --force--version --version=${{ env.SQX_VERSION}} --features=${{ env.SQX_FEATURES}} --no-default-features --locked
       - name: Migrate database
         run: ./scripts/init_db.sh
       - name: Linting
