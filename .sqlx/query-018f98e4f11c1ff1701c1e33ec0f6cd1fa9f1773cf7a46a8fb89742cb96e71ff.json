@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "\nSELECT\n    \"id\",\n    \"title\",\n    \"body\",\n    \"published\"\nFROM\n    \"Post\"\nWHERE\n    \"published\" = FALSE\nLIMIT\n    ?\n         ",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "title",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "body",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "published",
+        "ordinal": 3,
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Right": 1
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "018f98e4f11c1ff1701c1e33ec0f6cd1fa9f1773cf7a46a8fb89742cb96e71ff"
+}

@@ -39,6 +39,8 @@ jobs:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Migrate database
         run: ./scripts/init_db.sh
+      - name: Check sqlx-data.json is up-to-date
+        run: cargo sqlx prepare --check -- --bin axum-graphql
       - name: Run tests
         run: cargo test
   fmt:
@@ -91,6 +93,8 @@ jobs:
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION }} --features=${{ env.SQLX_FEATURES }} --no-default-features
       - name: Migrate database
         run: ./scripts/init_db.sh
+      - name: Check sqlx-data.json is up-to-date
+        run: cargo sqlx prepare --check -- --bin axum-graphql
       - name: Linting
         run: cargo clippy -- -D warnings
   msrv:
@@ -138,6 +142,8 @@ jobs:
         run: cargo install grcov
       - name: Migrate database
         run: ./scripts/init_db.sh
+      - name: Check sqlx-data.json is up-to-date
+        run: cargo sqlx prepare --check -- --bin axum-graphql
       - name: Build
         run: cargo build
       - name: Run tests

@@ -1,0 +1,38 @@
+{
+  "db_name": "SQLite",
+  "query": "\nINSERT INTO\n    \"Post\" (\"title\", \"body\", \"published\")\nVALUES\n    ($1, $2, false)\nRETURNING\n    \"id\",\n    \"title\",\n    \"body\",\n    \"published\"\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "id",
+        "ordinal": 0,
+        "type_info": "Integer"
+      },
+      {
+        "name": "title",
+        "ordinal": 1,
+        "type_info": "Text"
+      },
+      {
+        "name": "body",
+        "ordinal": 2,
+        "type_info": "Text"
+      },
+      {
+        "name": "published",
+        "ordinal": 3,
+        "type_info": "Bool"
+      }
+    ],
+    "parameters": {
+      "Right": 2
+    },
+    "nullable": [
+      false,
+      false,
+      false,
+      false
+    ]
+  },
+  "hash": "aeecdc95d3bab0b3d13adcf0b32ce1c2014eab62477a514d007082d3a0c1cfa4"
+}
