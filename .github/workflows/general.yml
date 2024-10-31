@@ -11,7 +11,7 @@ permissions: read-all
 env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-Dwarnings -Cinstrument-coverage"
-  LLVM_PROFILE_FILE: "project-%p-%m.profraw"
+  LLVM_PROFILE_FILE: "axum_graphql-%p-%m.profraw"
   SQLX_VERSION: 0.8.2
   SQLX_FEATURES: "rustls,sqlite"
 jobs:
@@ -130,14 +130,14 @@ jobs:
         with:
           path: / ~/.cargo/bin/sqlx ~/.cargo/bin/cargo-sqlx
           key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
+      - name: Checkout repository
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: dtolnay/rust-toolchain@4f366e621dc8fa63f557ca04b8f4361824a35a45 # stable
         with:
           components: llvm-tools-preview
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
-      - name: Checkout repository
-        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Install grcov
         run: cargo install grcov
       - name: Migrate database
