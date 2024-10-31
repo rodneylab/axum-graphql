@@ -39,6 +39,8 @@ jobs:
           go-version: '>=1.18.0'
       - name: Migrate database
         run: ./scripts/init_db.sh
+      - name: Check sqlx-data.json is up-to-date
+        run: cargo sqlx prepare --check -- --bin axum-graphql
       - uses: pre-commit/action@2c7b3805fd2a0fd8c1884dcaebf91fc102a13ecd # v3.0.1
         env:
           SKIP: no-commit-to-branch

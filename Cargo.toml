@@ -4,7 +4,8 @@ version = "0.1.0"
 edition = "2021"
 license = "BSD-3-Clause"
 repository = "https://github.com/rodneylab/axum-graphql"
-rust-version = "1.64.0"
+# tokio v1.41.0 msrv is 1.70.0
+rust-version = "1.70.0"
 description = "Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx."
 
 # Faster cargo check and cargo build
