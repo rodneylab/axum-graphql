@@ -134,7 +134,7 @@ jobs:
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - uses: dtolnay/rust-toolchain@4f366e621dc8fa63f557ca04b8f4361824a35a45 # stable
         with:
-          components: llvm-tools-preview
+          components: llvm-tools
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
