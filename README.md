@@ -91,18 +91,18 @@ The repo is just intended as a reference to speed up creating am Axum-based Grap
 - A production ready app
 - Guide to using Axum, async-graphql or SQLx that covers every feature.
   - To learn more about async-graphql, see:
-    - the [async-graphql docs](https://docs.rs/async-graphql/latest/async_graphql/),
-    - [async-graphql examples](https://github.com/async-graphql/examples), and;
+    - the [async-graphql docs](https://docs.rs/async-graphql/latest/async_graphql/);
+    - [async-graphql examples](https://github.com/async-graphql/examples); and
     - [async-graphql book](https://async-graphql.github.io/async-graphql/en/index.html).
   - Axum also has great resource, including:
-    - [axum docs](https://docs.rs/axum/latest/axum/) and;
+    - [axum docs](https://docs.rs/axum/latest/axum/); and
     - [axum examples](https://github.com/tokio-rs/axum/tree/main/examples).
-  - For a SQLx see:
-    - [SQLx docs](https://docs.rs/sqlx/latest/sqlx/),
+  - For SQLx resources, see:
+    - [SQLx docs](https://docs.rs/sqlx/latest/sqlx/);
     - [SQLx examples](https://github.com/launchbadge/sqlx/tree/main/examples); and
-    - [Rust SQLx basics with SQLite: super easy how-to](https://tms-dev-blog.com/rust-sqlx-basics-with-sqlite/)[]
+    - [Rust SQLx basics with SQLite: super easy how-to](https://tms-dev-blog.com/rust-sqlx-basics-with-sqlite/).
   - For a general introduction to building an web-based API in Rust, [Zero to Production in Rust](https://www.zero2prod.com/index.html) is marvellous.
 
 ## ☎️ Issues
 
-# Feel free to jump into the[Rodney Lab matrix chat room](https://matrix.to/#/%23rodney:matrix.org).
+Feel free to jump into the [Rodney Lab matrix chat room](https://matrix.to/#/%23rodney:matrix.org).
