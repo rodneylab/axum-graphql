@@ -10,7 +10,7 @@ pub struct Post {
     published: bool,
 }
 
-#[derive(SimpleObject)]
+#[derive(Debug, PartialEq, SimpleObject)]
 /// Extra information on the input error
 pub struct InputError {
     /// Field which had the invalid data
@@ -23,7 +23,7 @@ pub struct InputError {
     received: String,
 }
 
-#[derive(SimpleObject)]
+#[derive(Debug, PartialEq, SimpleObject)]
 pub struct DeleteDraftResponse {
     /// Deleted post
     post: Option<Post>,
@@ -32,7 +32,7 @@ pub struct DeleteDraftResponse {
     error: Option<InputError>,
 }
 
-#[derive(SimpleObject)]
+#[derive(Debug, PartialEq, SimpleObject)]
 pub struct PublishResponse {
     /// Published post
     post: Option<Post>,
@@ -233,7 +233,10 @@ mod tests {
 
     use crate::{
         database::run_migrations,
-        model::post::{create_draft_mutation, publish_mutation},
+        model::post::{
+            create_draft_mutation, delete_draft_mutation, publish_mutation, DeleteDraftResponse,
+            InputError,
+        },
     };
 
     use super::{posts_query, Post};
@@ -326,5 +329,62 @@ mod tests {
             Some(String::from("(code: 1) no such table: Post"))
         );
         assert_eq!(chain.next().map(|val| format!("{val}")), None);
+    }
+
+    #[tokio::test]
+    async fn create_draft_mutation_returns_error_message_if_draft_does_not_exist() {
+        // arrange
+        let db_pool = get_db_pool().await;
+        let title = String::from("New Post Title");
+        let body = String::from("# New Post\nNew post body");
+        let Post { id, .. } = create_draft_mutation(&db_pool, &title, &body)
+            .await
+            .unwrap();
+        let _ = publish_mutation(&db_pool, id).await;
+
+        // act
+        let outcome = delete_draft_mutation(&db_pool, 999).await.unwrap();
+
+        // assert
+        assert_eq!(
+            outcome,
+            DeleteDraftResponse {
+                post: None,
+                error: Some(InputError {
+                    field: String::from("id"),
+                    message: String::from("Did not find draft post with id `999`"),
+                    received: String::from("999")
+                })
+            }
+        );
+    }
+
+    #[tokio::test]
+    async fn create_draft_mutation_returns_draft_on_valid_input() {
+        // arrange
+        let db_pool = get_db_pool().await;
+        let title = String::from("New Post Title");
+        let body = String::from("# New Post\nNew post body");
+        let Post { id, .. } = create_draft_mutation(&db_pool, &title, &body)
+            .await
+            .unwrap();
+        //let _ = publish_mutation(&db_pool, id).await;
+
+        // act
+        let outcome = delete_draft_mutation(&db_pool, id).await.unwrap();
+
+        // assert
+        assert_eq!(
+            outcome,
+            DeleteDraftResponse {
+                post: Some(Post {
+                    id,
+                    title,
+                    body,
+                    published: false
+                }),
+                error: None
+            }
+        );
     }
 }
