@@ -1,13 +1,14 @@
 use anyhow::Context;
 use async_graphql::{Interface, SimpleObject, Union};
+use serde::Deserialize;
 use sqlx::SqlitePool;
 
-#[derive(Debug, PartialEq, SimpleObject)]
+#[derive(Debug, Deserialize, PartialEq, SimpleObject)]
 pub struct Post {
-    id: i64,
-    title: String,
-    body: String,
-    published: bool,
+    pub id: i64,
+    pub title: String,
+    pub body: String,
+    pub published: bool,
 }
 
 #[derive(Debug, PartialEq, SimpleObject)]
