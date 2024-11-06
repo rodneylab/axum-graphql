@@ -5,7 +5,7 @@ use sqlx::SqlitePool;
 
 use post::{
     create_draft_mutation, delete_draft_mutation, drafts_query, posts_query, publish_mutation,
-    DeleteDraftResponse, Post, PublishResponse,
+    DeleteDraftResponse, Post, PublishResponse, ValidationError,
 };
 
 pub(crate) type ServiceSchema = Schema<QueryRoot, MutationRoot, EmptySubscription>;
@@ -15,6 +15,8 @@ pub(crate) fn get_schema(db_pool: SqlitePool) -> ServiceSchema {
         .data(db_pool)
         // .limit_complexity(20) // may impact GraphQL Playground documentation
         // .limit_depth(5) // may impact GraphQL Playground documentation
+        // Registering ValidationError manually as it is not currently directly referenced
+        .register_output_type::<ValidationError>()
         .finish()
 }
 

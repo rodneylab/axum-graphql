@@ -1,5 +1,5 @@
 use anyhow::Context;
-use async_graphql::SimpleObject;
+use async_graphql::{Interface, SimpleObject, Union};
 use sqlx::SqlitePool;
 
 #[derive(Debug, PartialEq, SimpleObject)]
@@ -11,8 +11,8 @@ pub struct Post {
 }
 
 #[derive(Debug, PartialEq, SimpleObject)]
-/// Extra information on the input error
-pub struct InputError {
+/// Detail of the user input error
+pub struct UserInputError {
     /// Field which had the invalid data
     field: String,
 
@@ -23,22 +23,53 @@ pub struct InputError {
     received: String,
 }
 
-#[derive(Debug, PartialEq, SimpleObject)]
-pub struct DeleteDraftResponse {
-    /// Deleted post
-    post: Option<Post>,
-
-    /// Input error details
-    error: Option<InputError>,
+/// Errors generated while parsing or validating input parameters
+#[derive(Interface)]
+#[graphql(field(name = "message", ty = "String"))]
+pub enum ValidationError {
+    /// User input error, such as requesting an operation on a post with an `id` that does not
+    /// exist
+    UserInputError(UserInputError),
 }
 
+/// Response sent on valid delete draft mutation
 #[derive(Debug, PartialEq, SimpleObject)]
-pub struct PublishResponse {
-    /// Published post
-    post: Option<Post>,
+pub struct DeleteDraftSuccessResponse {
+    post: Post,
+}
 
-    /// Input error details
-    error: Option<InputError>,
+/// Response sent on delete draft mutation with validation issues identified
+#[derive(Debug, PartialEq, SimpleObject)]
+pub struct DeleteDraftErrorResponse {
+    error: UserInputError,
+}
+
+/// Union of responses sent on delete draft mutation
+#[derive(Debug, PartialEq, Union)]
+pub enum DeleteDraftResponse {
+    DeleteDraftSuccessResponse(DeleteDraftSuccessResponse),
+    DeleteDraftErrorResponse(DeleteDraftErrorResponse),
+}
+
+/// Response sent on valid publish draft mutation
+#[derive(Debug, PartialEq, SimpleObject)]
+pub struct PublishSuccessResponse {
+    /// Published post
+    post: Post,
+}
+
+/// Response sent on publish draft mutation with validation issues identified
+#[derive(Debug, PartialEq, SimpleObject)]
+pub struct PublishErrorResponse {
+    /// User input error details
+    error: UserInputError,
+}
+
+/// Union of responses sent on publish draft mutation
+#[derive(Debug, PartialEq, Union)]
+pub enum PublishResponse {
+    PublishSuccessResponse(PublishSuccessResponse),
+    PublishErrorResponse(PublishErrorResponse),
 }
 
 /// Return a list of up to 100 draft posts
@@ -164,18 +195,18 @@ RETURNING
     })?;
 
     match deleted_row {
-        Some(value) => Ok(DeleteDraftResponse {
-            post: Some(value),
-            error: None,
-        }),
-        None => Ok(DeleteDraftResponse {
-            post: None,
-            error: Some(InputError {
-                field: "id".to_string(),
-                message: format!("Did not find draft post with id `{id}`"),
-                received: id.to_string(),
-            }),
-        }),
+        Some(value) => Ok(DeleteDraftResponse::DeleteDraftSuccessResponse(
+            DeleteDraftSuccessResponse { post: value },
+        )),
+        None => Ok(DeleteDraftResponse::DeleteDraftErrorResponse(
+            DeleteDraftErrorResponse {
+                error: UserInputError {
+                    field: "id".to_string(),
+                    message: format!("Did not find draft post with id `{id}`"),
+                    received: id.to_string(),
+                },
+            },
+        )),
     }
 }
 
@@ -212,18 +243,18 @@ RETURNING
     })?;
 
     match updated_row {
-        Some(value) => Ok(PublishResponse {
-            post: Some(value),
-            error: None,
-        }),
-        None => Ok(PublishResponse {
-            post: None,
-            error: Some(InputError {
-                field: "id".to_string(),
-                message: format!("Did not find draft post with id `{id}`"),
-                received: id.to_string(),
-            }),
-        }),
+        Some(value) => Ok(PublishResponse::PublishSuccessResponse(
+            PublishSuccessResponse { post: value },
+        )),
+        None => Ok(PublishResponse::PublishErrorResponse(
+            PublishErrorResponse {
+                error: UserInputError {
+                    field: "id".to_string(),
+                    message: format!("Did not find draft post with id `{id}`"),
+                    received: id.to_string(),
+                },
+            },
+        )),
     }
 }
 
@@ -234,8 +265,9 @@ mod tests {
     use crate::{
         database::run_migrations,
         model::post::{
-            create_draft_mutation, delete_draft_mutation, publish_mutation, DeleteDraftResponse,
-            InputError,
+            create_draft_mutation, delete_draft_mutation, publish_mutation,
+            DeleteDraftErrorResponse, DeleteDraftResponse, DeleteDraftSuccessResponse,
+            UserInputError,
         },
     };
 
@@ -348,14 +380,13 @@ mod tests {
         // assert
         assert_eq!(
             outcome,
-            DeleteDraftResponse {
-                post: None,
-                error: Some(InputError {
+            DeleteDraftResponse::DeleteDraftErrorResponse(DeleteDraftErrorResponse {
+                error: UserInputError {
                     field: String::from("id"),
                     message: String::from("Did not find draft post with id `999`"),
                     received: String::from("999")
-                })
-            }
+                }
+            })
         );
     }
 
@@ -368,7 +399,6 @@ mod tests {
         let Post { id, .. } = create_draft_mutation(&db_pool, &title, &body)
             .await
             .unwrap();
-        //let _ = publish_mutation(&db_pool, id).await;
 
         // act
         let outcome = delete_draft_mutation(&db_pool, id).await.unwrap();
@@ -376,15 +406,14 @@ mod tests {
         // assert
         assert_eq!(
             outcome,
-            DeleteDraftResponse {
-                post: Some(Post {
+            DeleteDraftResponse::DeleteDraftSuccessResponse(DeleteDraftSuccessResponse {
+                post: Post {
                     id,
                     title,
                     body,
                     published: false
-                }),
-                error: None
-            }
+                },
+            })
         );
     }
 }
