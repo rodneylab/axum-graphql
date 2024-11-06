@@ -53,6 +53,29 @@ mutation CreateDraftMutation {
 }
 ```
 
+- Delete a draft:
+
+```graphql
+mutation DeleteDraftMutation {
+  deleteDraft(id: 1) {
+    __typename
+    ... on DeleteDraftSuccessResponse {
+      post {
+        id
+        title
+      }
+    }
+    ... on DeleteDraftErrorResponse {
+      error {
+        field
+        message
+        received
+      }
+    }
+  }
+}
+```
+
 - List existing drafts:
 
 ```graphql
