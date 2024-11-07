@@ -1,0 +1,12 @@
+{
+  "version": "4",
+  "remote": {
+    "https://esm.sh/browserslist@4.24.2": "3bdc798672b21f6f68339b2bbd3e7e7ef9b0ee8e239541e4a523357d65c42aac",
+    "https://esm.sh/lightningcss-wasm@1.28.1": "9b02abee3f11b5c33459f8e66f562c7f913bd123c13001a73dbded08ab7a03a4",
+    "https://esm.sh/v135/browserslist@4.24.2/denonext/browserslist.mjs": "af438cf2ff61f70ab6b40fdb14e54414a4729d0cee2761e76d39084624cd4425",
+    "https://esm.sh/v135/caniuse-lite@1.0.30001669/denonext/dist/unpacker/agents.js": "53fcdae36888c27adfd764bf9bbb3ae6455a2c90cfacdc10e263a5ce54472326",
+    "https://esm.sh/v135/electron-to-chromium@1.5.41/denonext/versions.js": "ad86bde9baa4510614a1ca85c4f5a7257521a62275ecfd7a60c2afa5de1683c4",
+    "https://esm.sh/v135/lightningcss-wasm@1.28.1/denonext/lightningcss-wasm.mjs": "83760eb161641ec01cbbba58f3e1b293056b988eb3c68c439bf46793c6be8940",
+    "https://esm.sh/v135/napi-wasm@1.1.3/denonext/napi-wasm.mjs": "6f218ce5e1b943147666f99e08d3e6b9b4ae0bd5542e0fa20758cb93e47fdd23"
+  }
+}
