@@ -1,4 +1,14 @@
-# axum-graphql
+<img src="./images/rodneylab-github-axum-graphql.png" alt="Rodney Lab Axum Graph Q L Git Hub banner">
+
+<p align="center">
+  <a aria-label="Open Rodney Lab site" href="https://rodneylab.com" rel="nofollow no:w
+  opener noreferrer">
+    <img alt="Rodney Lab logo" src="https://rodneylab.com/assets/icon.png" width="60" />
+  </a>
+</p>
+<h1 align="center">
+  axum-graphql
+</h1>
 
 **Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**
 
