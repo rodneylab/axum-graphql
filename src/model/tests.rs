@@ -62,6 +62,7 @@ mod helpers {
 
         id.as_i64().unwrap()
     }
+
     pub async fn publish_draft(app: &mut Router, id: i64) {
         let publish_draft_json_request_body: Value = json!({
             "operationName":"PublishMutation",
@@ -388,7 +389,7 @@ async fn publish_returns_user_error_for_invalid_id() {
 }
 
 #[tokio::test]
-async fn publish_returns_user_expected_result_forvalid_input() {
+async fn publish_returns_user_expected_result_for_valid_input() {
     // arrange
     let mut app = helpers::get_app().await;
     let _id_1 = helpers::create_draft(&mut app, "First Post Title", "First post body.").await;
@@ -443,6 +444,131 @@ async fn publish_returns_user_expected_result_forvalid_input() {
                 "post": {
                     "id": id_2,
                     "published": true,
+                }
+            }},
+            "extensions": { "traceId": "00000000000000000000000000000000" }
+        })
+    );
+}
+
+#[tokio::test]
+async fn delete_draft_returns_user_error_for_invalid_id() {
+    // arrange
+    let app = helpers::get_app().await;
+    let id = 9_999;
+    let delete_draft_json_request_body: Value = json!({
+        "operationName":"DeleteDraftMutation",
+        "variables":{},
+        "query": format!(r#"mutation DeleteDraftMutation {{
+  deleteDraft(id: {id}) {{
+    __typename
+    ... on DeleteDraftSuccessResponse {{
+      post {{
+        id
+        title
+      }}
+    }}
+    ... on DeleteDraftErrorResponse {{
+      error {{
+        field
+        message
+        received
+      }}
+    }}
+  }}
+}}"#),
+    });
+
+    // act
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method(Method::POST)
+                .uri("/")
+                .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
+                .body(Body::from(delete_draft_json_request_body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // assert
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let body: Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(
+        body,
+        json!({
+            "data": { "deleteDraft": {
+                "__typename": "DeleteDraftErrorResponse",
+                "error": {
+                    "field": "id",
+                    "message": "Did not find draft post with id `9999`",
+                    "received": "9999"
+                }
+            }},
+            "extensions": { "traceId": "00000000000000000000000000000000" }
+        })
+    );
+}
+
+#[tokio::test]
+async fn delete_draft_returns_user_expected_result_for_valid_input() {
+    // arrange
+    let mut app = helpers::get_app().await;
+    let _id_1 = helpers::create_draft(&mut app, "First Post Title", "First post body.").await;
+    let id_2 = helpers::create_draft(&mut app, "Second Post Title", "Second post body.").await;
+    let _id_3 = helpers::create_draft(&mut app, "Third Post Title", "Third post body.").await;
+    let delete_draft_json_request_body: Value = json!({
+        "operationName":"DeleteDraftMutation",
+        "variables":{},
+        "query": format!(r#"mutation DeleteDraftMutation {{
+  deleteDraft(id: {id_2}) {{
+    __typename
+    ... on DeleteDraftSuccessResponse {{
+      post {{
+        id
+        title
+      }}
+    }}
+    ... on DeleteDraftErrorResponse {{
+      error {{
+        field
+        message
+        received
+      }}
+    }}
+  }}
+}}"#),
+    });
+
+    // act
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method(Method::POST)
+                .uri("/")
+                .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
+                .body(Body::from(delete_draft_json_request_body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // assert
+    assert_eq!(response.status(), StatusCode::OK);
+
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    let body: Value = serde_json::from_slice(&body).unwrap();
+    assert_eq!(
+        body,
+        json!({
+            "data": { "deleteDraft": {
+                "__typename": "DeleteDraftSuccessResponse",
+                "post": {
+                    "id": id_2,
+                    "title": "Second Post Title"
                 }
             }},
             "extensions": { "traceId": "00000000000000000000000000000000" }
