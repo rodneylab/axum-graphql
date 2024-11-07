@@ -1,0 +1,21 @@
+{
+  "fmt": {
+    "include": ["./**/*.ts"],
+    "exclude": ["public/", "target/"]
+  },
+  "lint": {
+    "exclude": ["public/", "target/"],
+    "rules": {
+      "tags": ["recommended"]
+    }
+  },
+  "tasks": {
+    "fmt": "yamlfmt . && dprint fmt && deno fmt && cargo fmt",
+    "minify:css": "deno run --allow-env --allow-read --allow-net --allow-run --allow-write scripts/minify-css.ts"
+  },
+  "imports": {
+    "@/": "./",
+    "browserslist": "https://esm.sh/browserslist@4.24.2",
+    "lightningcss": "https://esm.sh/lightningcss-wasm@1.28.1"
+  }
+}
