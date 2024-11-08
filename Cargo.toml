@@ -8,6 +8,14 @@ repository = "https://github.com/rodneylab/axum-graphql"
 rust-version = "1.70.0"
 description = "Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx."
 
+# Faster snapshot runs
+# See: https://docs.rs/insta/latest/insta/#optional-faster-runs
+[profile.dev.package.insta]
+opt-level = 3
+
+[profile.dev.package.similar]
+opt-level = 3
+
 # Faster cargo check and cargo build
 # See: https://github.com/launchbadge/sqlx#compile-time-verification
 [profile.dev.package.sqlx-macros]
@@ -42,6 +50,7 @@ tracing-subscriber = { version = "0.3.18", features = ["std", "env-filter"] }
 
 [dev-dependencies]
 http-body-util = "0.1.2"
+insta = { version = "1.41.1", features = ["json"] }
 mime = "0.3.17"
 serde_json = "1.0"
 tower = { version = "0.5.1", features = ['util'] }
