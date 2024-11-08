@@ -103,6 +103,34 @@ mod helpers {
 }
 
 #[tokio::test]
+async fn snapshot_hello_query() {
+    // arrange
+    let app = helpers::get_app().await;
+    let json_request_body: Value = json!({
+        "operationName":"HelloQuery",
+        "variables":{},
+        "query":"query HelloQuery { hello }"
+    });
+
+    // act
+    let response = app
+        .oneshot(
+            Request::builder()
+                .method(Method::POST)
+                .uri("/")
+                .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
+                .body(Body::from(json_request_body.to_string()))
+                .unwrap(),
+        )
+        .await
+        .unwrap();
+
+    // assert
+    let body = response.into_body().collect().await.unwrap().to_bytes();
+    insta::assert_debug_snapshot!(body);
+}
+
+#[tokio::test]
 async fn graphql_endpoint_responds_to_hello_query() {
     // arrange
     let app = helpers::get_app().await;
