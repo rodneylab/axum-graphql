@@ -1,0 +1,5 @@
+{
+  "operationName": "HelloQuery",
+  "variables": {},
+  "query": "query HelloQuery { hello }"
+}

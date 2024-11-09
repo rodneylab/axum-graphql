@@ -1,0 +1,14 @@
+---
+source: src/model/tests.rs
+expression: body_json
+input_file: src/model/snapshot_inputs/hello.json
+snapshot_kind: text
+---
+{
+  "data": {
+    "hello": "Hello everybody!"
+  },
+  "extensions": {
+    "traceId": "[traceId]"
+  }
+}

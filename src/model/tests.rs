@@ -1,7 +1,10 @@
+use std::{path::Path, str};
+
 use axum::{
     body::Body,
     http::{header, Method, Request, StatusCode},
 };
+use futures::executor::block_on;
 use http_body_util::BodyExt;
 use serde_json::{json, Value};
 use tower::{Service, ServiceExt};
@@ -102,14 +105,17 @@ mod helpers {
     }
 }
 
-#[tokio::test]
-async fn snapshot_hello_query() {
+async fn snapshot_graqphql_query_async<P: AsRef<Path>>(path: P) {
     // arrange
     let app = helpers::get_app().await;
-    let json_request_body: Value = json!({
-        "operationName":"HelloQuery",
-        "variables":{},
-        "query":"query HelloQuery { hello }"
+    let json_request_body: Value = serde_json::from_slice(
+        &std::fs::read(&path).expect("file should exist and have read permissions set"),
+    )
+    .unwrap_or_else(|_| {
+        panic!(
+            "File `{}`, should contain valid JSON",
+            path.as_ref().display()
+        )
     });
 
     // act
@@ -126,8 +132,21 @@ async fn snapshot_hello_query() {
         .unwrap();
 
     // assert
-    let body = response.into_body().collect().await.unwrap().to_bytes();
-    insta::assert_debug_snapshot!(body);
+    let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
+    let body = str::from_utf8(&body_bytes).unwrap();
+    let body_json: Value = serde_json::from_str(body).unwrap();
+    insta::assert_json_snapshot!(body_json, {".extensions.traceId" => "[traceId]"});
+    assert_eq!(
+        body_json["extensions"]["traceId"],
+        "00000000000000000000000000000000"
+    );
+}
+
+#[tokio::test]
+async fn snapshot_graphql_queries() {
+    insta::glob!("snapshot_inputs/*.json", |path| {
+        block_on(snapshot_graqphql_query_async(path));
+    });
 }
 
 #[tokio::test]

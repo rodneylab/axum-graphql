@@ -1,6 +1,0 @@
----
-source: src/model/tests.rs
-expression: body
-snapshot_kind: text
----
-b"{\"data\":{\"hello\":\"Hello everybody!\"},\"extensions\":{\"traceId\":\"00000000000000000000000000000000\"}}"

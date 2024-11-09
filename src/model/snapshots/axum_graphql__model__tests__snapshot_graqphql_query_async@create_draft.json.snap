@@ -1,0 +1,17 @@
+---
+source: src/model/tests.rs
+expression: body_json
+input_file: src/model/snapshot_inputs/create_draft.json
+snapshot_kind: text
+---
+{
+  "data": {
+    "createDraft": {
+      "id": 1,
+      "title": "Draft title"
+    }
+  },
+  "extensions": {
+    "traceId": "[traceId]"
+  }
+}
