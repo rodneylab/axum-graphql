@@ -1,0 +1,5 @@
+{
+  "operationName": "CreateDraftMutation",
+  "variables": {},
+  "query": "mutation CreateDraftMutation { createDraft(title: \"Draft title\", body: \"Draft body text\") { id title } }"
+}
