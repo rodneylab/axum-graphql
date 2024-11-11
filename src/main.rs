@@ -9,6 +9,7 @@ use std::{env, future::ready};
 
 use axum::{extract::Extension, middleware, routing::get, serve, Router};
 use dotenvy::dotenv;
+use metrics_exporter_prometheus::PrometheusHandle;
 use sqlx::SqlitePool;
 use tokio::signal;
 use tower_http::{compression::CompressionLayer, services::ServeDir, timeout::TimeoutLayer};
@@ -53,8 +54,6 @@ async fn shutdown_signal() {
 }
 
 async fn main_app(database_url: &str) -> Router<SqlitePool> {
-    create_tracing_subscriber_from_env();
-
     tracing::info!("Main app service starting");
 
     let db_pool = SqlitePool::connect(database_url)
@@ -77,13 +76,13 @@ async fn main_app(database_url: &str) -> Router<SqlitePool> {
         .layer(Extension(schema))
 }
 
-fn metrics_app() -> Router {
-    let recorder_handle = create_prometheus_recorder();
+pub fn metrics_app(recorder_handle: PrometheusHandle) -> Router {
     info!("Metrics service starting");
     Router::new().route("/metrics", get(move || ready(recorder_handle.render())))
 }
 
 async fn start_main_server(database_url: &str) {
+    create_tracing_subscriber_from_env();
     let app = main_app(database_url).await;
     let local_addr = "127.0.0.1:8000";
     let listener = tokio::net::TcpListener::bind(local_addr)
@@ -105,7 +104,8 @@ async fn start_main_server(database_url: &str) {
 }
 
 async fn start_metrics_server() {
-    let app = metrics_app();
+    let recorder_handle = create_prometheus_recorder();
+    let app = metrics_app(recorder_handle);
 
     let listener = tokio::net::TcpListener::bind("127.0.0.1:8001")
         .await
