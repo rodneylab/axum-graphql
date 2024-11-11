@@ -113,7 +113,7 @@ async fn snapshot_graqphql_query_async<P: AsRef<Path>>(path: P) {
     )
     .unwrap_or_else(|_| {
         panic!(
-            "File `{}`, should contain valid JSON",
+            "File `{}` should contain valid JSON",
             path.as_ref().display()
         )
     });

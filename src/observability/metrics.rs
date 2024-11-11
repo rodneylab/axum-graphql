@@ -51,3 +51,96 @@ pub(crate) async fn track_metrics(req: Request, next: Next) -> impl IntoResponse
 
     response
 }
+
+#[cfg(test)]
+mod tests {
+    use std::str;
+
+    use axum::{
+        body::Body,
+        http::{Request, StatusCode},
+        Router,
+    };
+    use http_body_util::BodyExt;
+    use metrics_exporter_prometheus::PrometheusHandle;
+    use once_cell::sync::Lazy;
+    use sqlx::sqlite::SqlitePoolOptions;
+    use tower::ServiceExt;
+
+    use super::create_prometheus_recorder;
+    use crate::{
+        main_app, metrics_app, observability::tracing::create_tracing_subscriber_from_env,
+    };
+
+    async fn get_app() -> Router {
+        let database_url = "sqlite://:memory:";
+        let app = main_app(database_url).await;
+
+        let db_pool = SqlitePoolOptions::new()
+            .max_connections(1)
+            .connect(database_url)
+            .await
+            .unwrap();
+
+        app.with_state(db_pool)
+    }
+
+    static TRACING: Lazy<()> = Lazy::new(|| {
+        create_tracing_subscriber_from_env();
+    });
+
+    static METRICS: Lazy<PrometheusHandle> = Lazy::new(create_prometheus_recorder);
+
+    #[tokio::test]
+    async fn metrics_endpoint_listens_on_initialisation() {
+        // arrange
+        // Avoid re-initialising the tracing subscriber for each test
+        let recorder_handle = Lazy::force(&METRICS);
+        Lazy::force(&TRACING);
+        let metrics_app_instance = metrics_app(recorder_handle.clone());
+
+        // act
+        let response = metrics_app_instance
+            .oneshot(Request::get("/metrics").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+
+        // assert
+        assert_eq!(response.status(), StatusCode::OK);
+        let body = response.into_body().collect().await.unwrap().to_bytes();
+        assert_eq!(&body[..], b"");
+    }
+
+    #[tokio::test]
+    async fn metrics_endpoint_returns_collected_metrics() {
+        // arrange
+        // Avoid re-initialising the tracing subscriber for each test
+        let recorder_handle = Lazy::force(&METRICS);
+        Lazy::force(&TRACING);
+        //let app = get_app().await;
+        Lazy::force(&TRACING);
+        std::env::set_var("OPENTELEMETRY_ENABLED", "true");
+        let main_app_instance = get_app().await;
+        let metrics_app_instance = metrics_app(recorder_handle.clone());
+
+        // act
+        let _ = main_app_instance
+            .oneshot(Request::get("/health_check").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+        let response = metrics_app_instance
+            .oneshot(Request::get("/metrics").body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+
+        // assert
+        assert_eq!(response.status(), StatusCode::OK);
+        let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
+        let body = str::from_utf8(&body_bytes).unwrap();
+        let mut lines = body.lines();
+        assert_eq!(lines.next(), Some("# TYPE http_requests_total counter"));
+
+        let line_2 = lines.next().unwrap();
+        assert_eq!(line_2.find("http_requests_total"), Some(0));
+    }
+}
