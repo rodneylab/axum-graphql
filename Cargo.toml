@@ -42,7 +42,7 @@ opentelemetry-semantic-conventions = "0.26.0"
 opentelemetry_sdk = { version = "0.26.0", features = ["rt-tokio"] }
 serde = { version = "1.0.210", features = ["derive"] }
 sqlx = { version = "0.8.2", features = ["runtime-tokio-rustls", "sqlite"] }
-tokio = { version = "1.40.0", features = ["full"] }
+tokio = { version = "1.41.1", features = ["full"] }
 tower-http = { version = "0.6.1", features = ["compression-br", "compression-gzip", "fs", "timeout"] }
 tracing = "0.1.40"
 tracing-opentelemetry = "0.27.0"
