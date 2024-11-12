@@ -1,4 +1,9 @@
+^./docker-compose.yml
+^./images/rodneylab-github-axum-graphql.png
+^./images/usage.gif
+^./sqlite.db
+^file:\/\/.*
+^sqlite:\/\/.*
 http://localhost/
 http://localhost:8000/
 http://localhost:8001/metrics
-^file:\/\/.*
