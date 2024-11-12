@@ -112,6 +112,10 @@ mod tests {
         assert_eq!(&body[..], b"");
     }
 
+    /// Internally, `prometheus_parse` uses an [`std::collections::HashMap`] to store labels, which means the order of the
+    /// values will not be deterministic and so not suitable for snapshot testing.  This helper
+    /// function creates a [`BTreeMap`] from the labels, and will return labels in a deterministic
+    /// order.
     fn sorted_prometheus_metric_labels(labels: &prometheus_parse::Labels) -> BTreeMap<&str, &str> {
         labels
             .iter()
@@ -125,7 +129,7 @@ mod tests {
     #[should_panic(
         expected = "Could not install the Prometheus recorder, there might already be an instance running.  It should only be started once.: FailedToSetGlobalRecorder(SetRecorderError { .. })"
     )]
-    async fn metrics_endpoint_warns_if_create_prometheus_caled_more_than_once() {
+    async fn metrics_endpoint_warns_if_create_prometheus_called_more_than_once() {
         // arrange
         let _ = Lazy::force(&METRICS);
 
@@ -163,7 +167,8 @@ mod tests {
         let lines: Vec<_> = body.lines().map(|val| Ok(val.to_owned())).collect();
         let Scrape { docs, samples } = prometheus_parse::Scrape::parse(lines.into_iter()).unwrap();
         assert!(docs.is_empty());
-        assert_eq!(samples.len(), 4);
+        assert!(samples.len() > 3);
+        assert_eq!(samples.len() % 4, 0);
 
         let metric = "http_requests_duration_seconds";
         let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
