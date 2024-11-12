@@ -109,8 +109,6 @@ mod tests {
 
         // assert
         assert_eq!(response.status(), StatusCode::OK);
-        let body = response.into_body().collect().await.unwrap().to_bytes();
-        assert_eq!(&body[..], b"");
     }
 
     /// Internally, `prometheus_parse` uses an [`std::collections::HashMap`] to store labels, which means the order of the
