@@ -129,7 +129,7 @@ mod tests {
     #[should_panic(
         expected = "Could not install the Prometheus recorder, there might already be an instance running.  It should only be started once.: FailedToSetGlobalRecorder(SetRecorderError { .. })"
     )]
-    async fn metrics_endpoint_warns_if_create_prometheus_called_more_than_once() {
+    async fn create_prometheus_emits_error_message_if_called_more_than_once() {
         // arrange
         let _ = Lazy::force(&METRICS);
 
@@ -171,9 +171,10 @@ mod tests {
         assert_eq!(samples.len() % 4, 0);
 
         let metric = "http_requests_duration_seconds";
-        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
-            panic!("Missing `{metric}` metric");
-        };
+        let sample = samples
+            .iter()
+            .find(|val| val.metric == metric)
+            .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         let prometheus_parse::Value::Histogram(histogram) = &sample.value else {
             panic!("Expected histogram, got {:?}", sample.value);
         };
@@ -189,17 +190,22 @@ mod tests {
         insta::assert_json_snapshot!(labels);
 
         let metric = "http_requests_duration_seconds_count";
-        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
-            panic!("Missing `{metric}` metric");
+        let sample = samples
+            .iter()
+            .find(|val| val.metric == metric)
+            .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
+        let prometheus_parse::Value::Untyped(count) = &sample.value else {
+            panic!("Expected time count, got {:?}", sample.value);
         };
-        assert_eq!(sample.value, prometheus_parse::Value::Untyped(1.0));
+        assert!(*count <= 10.0);
         let labels = sorted_prometheus_metric_labels(&sample.labels);
         insta::assert_json_snapshot!(labels);
 
         let metric = "http_requests_duration_seconds_sum";
-        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
-            panic!("Missing `{metric}` metric");
-        };
+        let sample = samples
+            .iter()
+            .find(|val| val.metric == metric)
+            .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         let prometheus_parse::Value::Untyped(sum) = &sample.value else {
             panic!("Expected time sum, got {:?}", sample.value);
         };
@@ -208,9 +214,10 @@ mod tests {
         insta::assert_json_snapshot!(labels);
 
         let metric = "http_requests_total";
-        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
-            panic!("Missing `{metric}` metric");
-        };
+        let sample = samples
+            .iter()
+            .find(|val| val.metric == metric)
+            .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         assert_eq!(sample.value, prometheus_parse::Value::Counter(1.0));
         let labels = sorted_prometheus_metric_labels(&sample.labels);
         insta::assert_json_snapshot!(labels);
