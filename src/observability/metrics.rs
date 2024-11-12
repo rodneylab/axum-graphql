@@ -23,7 +23,7 @@ pub(crate) fn create_prometheus_recorder() -> PrometheusHandle {
             panic!("Could not initialise the bucket for '{REQUEST_DURATION_METRIC_NAME}'",)
         })
         .install_recorder()
-        .expect("Could not install the Prometheus recorder")
+        .expect("Could not install the Prometheus recorder, there might already be an instance running.  It should only be started once.")
 }
 
 pub(crate) async fn track_metrics(req: Request, next: Next) -> impl IntoResponse {
@@ -54,7 +54,7 @@ pub(crate) async fn track_metrics(req: Request, next: Next) -> impl IntoResponse
 
 #[cfg(test)]
 mod tests {
-    use std::str;
+    use std::{collections::BTreeMap, str};
 
     use axum::{
         body::Body,
@@ -64,6 +64,7 @@ mod tests {
     use http_body_util::BodyExt;
     use metrics_exporter_prometheus::PrometheusHandle;
     use once_cell::sync::Lazy;
+    use prometheus_parse::{HistogramCount, Scrape};
     use sqlx::sqlite::SqlitePoolOptions;
     use tower::ServiceExt;
 
@@ -111,13 +112,35 @@ mod tests {
         assert_eq!(&body[..], b"");
     }
 
+    fn sorted_prometheus_metric_labels(labels: &prometheus_parse::Labels) -> BTreeMap<&str, &str> {
+        labels
+            .iter()
+            .fold(BTreeMap::<&str, &str>::new(), |mut acc, (key, val)| {
+                acc.insert(key, val);
+                acc
+            })
+    }
+
+    #[tokio::test]
+    #[should_panic(
+        expected = "Could not install the Prometheus recorder, there might already be an instance running.  It should only be started once.: FailedToSetGlobalRecorder(SetRecorderError { .. })"
+    )]
+    async fn metrics_endpoint_warns_if_create_prometheus_caled_more_than_once() {
+        // arrange
+        let _ = Lazy::force(&METRICS);
+
+        // act
+        create_prometheus_recorder();
+
+        // assert
+    }
+
     #[tokio::test]
     async fn metrics_endpoint_returns_collected_metrics() {
         // arrange
         // Avoid re-initialising the tracing subscriber for each test
         let recorder_handle = Lazy::force(&METRICS);
         Lazy::force(&TRACING);
-        //let app = get_app().await;
         Lazy::force(&TRACING);
         std::env::set_var("OPENTELEMETRY_ENABLED", "true");
         let main_app_instance = get_app().await;
@@ -125,7 +148,7 @@ mod tests {
 
         // act
         let _ = main_app_instance
-            .oneshot(Request::get("/health_check").body(Body::empty()).unwrap())
+            .oneshot(Request::get("/health").body(Body::empty()).unwrap())
             .await
             .unwrap();
         let response = metrics_app_instance
@@ -137,10 +160,54 @@ mod tests {
         assert_eq!(response.status(), StatusCode::OK);
         let body_bytes = response.into_body().collect().await.unwrap().to_bytes();
         let body = str::from_utf8(&body_bytes).unwrap();
-        let mut lines = body.lines();
-        assert_eq!(lines.next(), Some("# TYPE http_requests_total counter"));
+        let lines: Vec<_> = body.lines().map(|val| Ok(val.to_owned())).collect();
+        let Scrape { docs, samples } = prometheus_parse::Scrape::parse(lines.into_iter()).unwrap();
+        assert!(docs.is_empty());
+        assert_eq!(samples.len(), 4);
 
-        let line_2 = lines.next().unwrap();
-        assert_eq!(line_2.find("http_requests_total"), Some(0));
+        let metric = "http_requests_duration_seconds";
+        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
+            panic!("Missing `{metric}` metric");
+        };
+        let prometheus_parse::Value::Histogram(histogram) = &sample.value else {
+            panic!("Expected histogram, got {:?}", sample.value);
+        };
+        assert_eq!(histogram.len(), 12);
+        assert_eq!(
+            histogram[0],
+            HistogramCount {
+                less_than: 0.005,
+                count: 1.0
+            }
+        );
+        let labels = sorted_prometheus_metric_labels(&sample.labels);
+        insta::assert_json_snapshot!(labels);
+
+        let metric = "http_requests_duration_seconds_count";
+        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
+            panic!("Missing `{metric}` metric");
+        };
+        assert_eq!(sample.value, prometheus_parse::Value::Untyped(1.0));
+        let labels = sorted_prometheus_metric_labels(&sample.labels);
+        insta::assert_json_snapshot!(labels);
+
+        let metric = "http_requests_duration_seconds_sum";
+        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
+            panic!("Missing `{metric}` metric");
+        };
+        let prometheus_parse::Value::Untyped(sum) = &sample.value else {
+            panic!("Expected time sum, got {:?}", sample.value);
+        };
+        assert!(*sum <= 0.001);
+        let labels = sorted_prometheus_metric_labels(&sample.labels);
+        insta::assert_json_snapshot!(labels);
+
+        let metric = "http_requests_total";
+        let Some(sample) = samples.iter().find(|val| val.metric == metric) else {
+            panic!("Missing `{metric}` metric");
+        };
+        assert_eq!(sample.value, prometheus_parse::Value::Counter(1.0));
+        let labels = sorted_prometheus_metric_labels(&sample.labels);
+        insta::assert_json_snapshot!(labels);
     }
 }
