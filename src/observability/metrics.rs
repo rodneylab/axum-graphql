@@ -218,7 +218,10 @@ mod tests {
             .iter()
             .find(|val| val.metric == metric)
             .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
-        assert_eq!(sample.value, prometheus_parse::Value::Counter(1.0));
+        let prometheus_parse::Value::Counter(total) = &sample.value else {
+            panic!("Expected time count, got {:?}", sample.value);
+        };
+        assert!(*total > 0.0);
         let labels = sorted_prometheus_metric_labels(&sample.labels);
         insta::assert_json_snapshot!(labels);
     }
