@@ -192,7 +192,7 @@ mod tests {
         let metric = "http_requests_duration_seconds_count";
         let sample = samples
             .iter()
-            .find(|val| val.metric == metric)
+            .find(|val| val.metric == metric && val.labels.get("path") == Some("/health"))
             .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         let prometheus_parse::Value::Untyped(count) = &sample.value else {
             panic!("Expected time count, got {:?}", sample.value);
@@ -204,7 +204,7 @@ mod tests {
         let metric = "http_requests_duration_seconds_sum";
         let sample = samples
             .iter()
-            .find(|val| val.metric == metric)
+            .find(|val| val.metric == metric && val.labels.get("path") == Some("/health"))
             .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         let prometheus_parse::Value::Untyped(sum) = &sample.value else {
             panic!("Expected time sum, got {:?}", sample.value);
@@ -216,7 +216,7 @@ mod tests {
         let metric = "http_requests_total";
         let sample = samples
             .iter()
-            .find(|val| val.metric == metric)
+            .find(|val| val.metric == metric && val.labels.get("path") == Some("/health"))
             .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         let prometheus_parse::Value::Counter(total) = &sample.value else {
             panic!("Expected time count, got {:?}", sample.value);
