@@ -1,0 +1,10 @@
+---
+source: src/observability/metrics.rs
+expression: labels
+snapshot_kind: text
+---
+{
+  "method": "GET",
+  "path": "/health",
+  "status": "200"
+}
