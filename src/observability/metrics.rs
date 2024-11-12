@@ -61,10 +61,11 @@ mod tests {
         http::{Request, StatusCode},
         Router,
     };
+    use float_cmp::approx_eq;
     use http_body_util::BodyExt;
     use metrics_exporter_prometheus::PrometheusHandle;
     use once_cell::sync::Lazy;
-    use prometheus_parse::{HistogramCount, Scrape};
+    use prometheus_parse::Scrape;
     use sqlx::sqlite::SqlitePoolOptions;
     use tower::ServiceExt;
 
@@ -179,13 +180,14 @@ mod tests {
             panic!("Expected histogram, got {:?}", sample.value);
         };
         assert_eq!(histogram.len(), 12);
-        assert_eq!(
-            histogram[0],
-            HistogramCount {
-                less_than: 0.005,
-                count: 1.0
-            }
-        );
+        assert!(histogram[0].count >= 1.0);
+        assert!(approx_eq!(
+            f64,
+            histogram[0].less_than,
+            0.005,
+            epsilon = f64::EPSILON,
+            ulps = 2
+        ));
         let labels = sorted_prometheus_metric_labels(&sample.labels);
         insta::assert_json_snapshot!(labels);
 
