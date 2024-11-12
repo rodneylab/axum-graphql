@@ -172,7 +172,7 @@ mod tests {
         let metric = "http_requests_duration_seconds";
         let sample = samples
             .iter()
-            .find(|val| val.metric == metric)
+            .find(|val| val.metric == metric && val.labels.get("path") == Some("/health"))
             .unwrap_or_else(|| panic!("Missing `{metric}` metric"));
         let prometheus_parse::Value::Histogram(histogram) = &sample.value else {
             panic!("Expected histogram, got {:?}", sample.value);
