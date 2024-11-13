@@ -17,22 +17,13 @@ mod helpers {
     };
     use http_body_util::BodyExt;
     use serde_json::{json, Value};
-    use sqlx::sqlite::SqlitePoolOptions;
     use tower::{Service, ServiceExt};
 
-    use crate::main_app;
+    use crate::startup::main_router;
 
     pub async fn get_app() -> Router {
         let database_url = "sqlite://:memory:";
-        let app = main_app(database_url).await;
-
-        let db_pool = SqlitePoolOptions::new()
-            .max_connections(1)
-            .connect(database_url)
-            .await
-            .unwrap();
-
-        app.with_state(db_pool)
+        main_router(database_url).await
     }
 
     pub async fn create_draft(app: &mut Router, title: &str, body: &str) -> i64 {
