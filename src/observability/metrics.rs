@@ -20,7 +20,7 @@ pub(crate) fn create_prometheus_recorder() -> PrometheusHandle {
             EXPONENTIAL_SECONDS,
         )
         .unwrap_or_else(|_| {
-            panic!("Could not initialise the bucket for '{REQUEST_DURATION_METRIC_NAME}'",)
+            panic!("Bucket values should not be an empty array (initialising the bucket for '{REQUEST_DURATION_METRIC_NAME}')",)
         })
         .install_recorder()
         .expect("Could not install the Prometheus recorder, there might already be an instance running.  It should only be started once.")
@@ -66,25 +66,17 @@ mod tests {
     use metrics_exporter_prometheus::PrometheusHandle;
     use once_cell::sync::Lazy;
     use prometheus_parse::Scrape;
-    use sqlx::sqlite::SqlitePoolOptions;
     use tower::ServiceExt;
 
     use super::create_prometheus_recorder;
     use crate::{
-        main_app, metrics_app, observability::tracing::create_tracing_subscriber_from_env,
+        observability::tracing::create_tracing_subscriber_from_env,
+        startup::{main_router, metrics_router},
     };
 
     async fn get_app() -> Router {
         let database_url = "sqlite://:memory:";
-        let app = main_app(database_url).await;
-
-        let db_pool = SqlitePoolOptions::new()
-            .max_connections(1)
-            .connect(database_url)
-            .await
-            .unwrap();
-
-        app.with_state(db_pool)
+        main_router(database_url).await
     }
 
     static TRACING: Lazy<()> = Lazy::new(|| {
@@ -99,7 +91,7 @@ mod tests {
         // Avoid re-initialising the tracing subscriber for each test
         let recorder_handle = Lazy::force(&METRICS);
         Lazy::force(&TRACING);
-        let metrics_app_instance = metrics_app(recorder_handle.clone());
+        let metrics_app_instance = metrics_router(recorder_handle.clone());
 
         // act
         let response = metrics_app_instance
@@ -147,7 +139,7 @@ mod tests {
         Lazy::force(&TRACING);
         std::env::set_var("OPENTELEMETRY_ENABLED", "true");
         let main_app_instance = get_app().await;
-        let metrics_app_instance = metrics_app(recorder_handle.clone());
+        let metrics_app_instance = metrics_router(recorder_handle.clone());
 
         // act
         let _ = main_app_instance
