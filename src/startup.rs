@@ -19,7 +19,7 @@ pub struct ApplicationRouters {
 }
 
 impl ApplicationRouters {
-    /// Build the main app and metics app routers.  These routers can be used in unit tests.
+    /// Build the main app and metrics app routers.  These routers can be used in unit tests.
     ///
     /// # Errors
     /// Returns an error if the database is not reachable

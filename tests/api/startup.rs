@@ -9,13 +9,10 @@ use tower::ServiceExt;
 
 use crate::helpers::METRICS;
 
-use axum_graphql::{
-    observability::tracing::create_tracing_subscriber_from_env,
-    startup::{Application, ApplicationRouters},
-};
+use axum_graphql::startup::{Application, ApplicationRouters};
 
 #[tokio::test]
-async fn aplication_router_build_successfully_creates_main_and_metrics_routers() {
+async fn application_router_build_successfully_creates_main_and_metrics_routers() {
     // arrange
     let database_url = "sqlite://:memory:";
     let recorder_handle: PrometheusHandle = Lazy::<PrometheusHandle>::force(&METRICS).clone();
@@ -43,7 +40,7 @@ async fn aplication_router_build_successfully_creates_main_and_metrics_routers()
 }
 
 #[tokio::test]
-async fn aplication_build_successfully_creates_main_and_metrics_servers() {
+async fn application_build_successfully_creates_main_and_metrics_servers() {
     // arrange
     let database_url = "sqlite://:memory:";
     let recorder_handle: PrometheusHandle = Lazy::<PrometheusHandle>::force(&METRICS).clone();
