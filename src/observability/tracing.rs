@@ -18,11 +18,17 @@ struct OpenTelemetryConfig {
     tracing_service_name: String,
 }
 
+/// .
+///
+/// # Panics
+///
+/// Panics if `OPENTELEMETRY_ENABLED` environment variable exists and is not either `true` or
+/// `false`.
 pub fn create_tracing_subscriber_from_env() {
     let opentelemetry_enabled: bool = env::var("OPENTELEMETRY_ENABLED")
         .unwrap_or_else(|_| "false".into())
         .parse()
-        .unwrap();
+        .expect("`OPENTELEMETRY_ENABLED` env variable should be either `true` or `false`");
 
     if opentelemetry_enabled {
         let config = get_opentelemetry_config_from_env();
@@ -32,7 +38,7 @@ pub fn create_tracing_subscriber_from_env() {
             .with(tracing_subscriber::filter::LevelFilter::from_level(
                 Level::INFO,
             ))
-            .with(tracing_subscriber::fmt::layer())
+            .with(tracing_subscriber::fmt::layer().with_test_writer())
             .with(OpenTelemetryLayer::new(tracer))
             .init();
 

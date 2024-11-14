@@ -1,16 +1,10 @@
 #![warn(clippy::all, clippy::pedantic)]
 
-mod database;
-mod model;
-mod observability;
-mod routes;
-mod startup;
-
 use std::env;
 
 use dotenvy::dotenv;
 
-use crate::{
+use axum_graphql::{
     database::create as create_database,
     observability::{
         metrics::create_prometheus_recorder, tracing::create_tracing_subscriber_from_env,
