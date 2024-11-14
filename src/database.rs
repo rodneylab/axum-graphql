@@ -3,6 +3,11 @@ use sqlx::{
     Sqlite, SqlitePool,
 };
 
+/// .
+///
+/// # Panics
+///
+/// Panics if unbale to create the database.
 pub async fn create(db_url: &str) {
     if Sqlite::database_exists(db_url).await.unwrap_or(false) {
         tracing::info!("Database already exists");
@@ -15,6 +20,11 @@ pub async fn create(db_url: &str) {
     }
 }
 
+/// .
+///
+/// # Panics
+///
+/// Panics if unable to run migrations successfully.
 pub async fn run_migrations(db_pool: &SqlitePool) {
     let migrations = std::path::PathBuf::from("migrations");
 
