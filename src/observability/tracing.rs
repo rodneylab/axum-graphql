@@ -44,7 +44,15 @@ pub fn create_tracing_subscriber_from_env() {
 
         tracing::info!("Tracing subscriber created and initialised");
     } else {
-        println!("OpenTelemetry is not enabled, set `OPENTELEMETRY_ENABLED` to true, to enable");
+        println!("OpenTelemetry is not enabled, set `OPENTELEMETRY_ENABLED` to true, to enable it");
+        tracing_subscriber::registry()
+            .with(tracing_subscriber::filter::LevelFilter::from_level(
+                Level::INFO,
+            ))
+            .with(tracing_subscriber::fmt::layer().with_test_writer())
+            .init();
+
+        tracing::info!("Tracing subscriber created and initialised");
     }
 }
 
