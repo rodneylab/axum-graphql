@@ -25,7 +25,7 @@ jobs:
           egress-policy: audit
           disable-telemetry: true
       - name: Install Linux Dependencies
-        run: sudo apt-get update && sudo apt-get install sqlite3 -y
+        run: sudo apt-get update && sudo apt-get install -y libxdo-dev sqlite3
       - name: Cache sqlx-cli
         uses: actions/cache@6849a6489940f00c2f30c0fb92c6274307ccb58a # v4.1.2
         id: cache-sqlx

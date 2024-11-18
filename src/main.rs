@@ -23,7 +23,13 @@ async fn main() -> std::io::Result<()> {
 
     let recorder_handle = create_prometheus_recorder();
 
-    let application = Application::build(&database_url, recorder_handle).await?;
+    let application = Application::build(
+        &database_url,
+        recorder_handle,
+        ("127.0.0.1", 8000),
+        ("127.0.0.1", 8001),
+    )
+    .await?;
     application.run_until_stopped().await?;
 
     Ok(())

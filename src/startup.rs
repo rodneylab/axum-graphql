@@ -36,7 +36,12 @@ impl ApplicationRouters {
     }
 }
 
-async fn shutdown_signal() {
+/// .
+///
+/// # Panics
+///
+/// Panics if unable to install Ctrl +C handler.
+pub async fn shutdown_signal() {
     let ctrl_c = async {
         signal::ctrl_c()
             .await
@@ -68,7 +73,9 @@ async fn shutdown_signal() {
 
 pub struct Application {
     pub main_server: Serve<Router, Router>,
+    pub main_server_port: u16,
     pub metrics_server: Serve<Router, Router>,
+    pub metrics_server_port: u16,
 }
 
 impl Application {
@@ -83,6 +90,8 @@ impl Application {
     pub async fn build(
         database_url: &str,
         recorder_handle: PrometheusHandle,
+        (main_listener_ip, main_listener_port): (&str, u16),
+        (metrics_listener_ip, metrics_listener_port): (&str, u16),
     ) -> Result<Self, std::io::Error> {
         let ApplicationRouters {
             main_router,
@@ -91,15 +100,22 @@ impl Application {
             .await
             .expect("database should be reachable");
 
-        let local_addr = "127.0.0.1:8000";
-        let main_listener = tokio::net::TcpListener::bind(local_addr)
-            .await
-            .unwrap_or_else(|_| panic!("`{}` should not already be in use", &local_addr));
+        let main_listener =
+            tokio::net::TcpListener::bind(format!("{main_listener_ip}:{main_listener_port}"))
+                .await
+                .unwrap_or_else(|_| {
+                    panic!("`{main_listener_ip}:{main_listener_port}` should not already be in use")
+                });
+        let main_server_port = main_listener.local_addr().unwrap().port();
         tracing::info!(
             "Main app service listening on {}",
             main_listener.local_addr().unwrap()
         );
-        let metrics_listener = tokio::net::TcpListener::bind("127.0.0.1:8001").await?;
+
+        let metrics_listener =
+            tokio::net::TcpListener::bind(format!("{metrics_listener_ip}:{metrics_listener_port}"))
+                .await?;
+        let metrics_server_port = metrics_listener.local_addr().unwrap().port();
 
         tracing::info!(
             "Metrics service listening on {}",
@@ -108,7 +124,9 @@ impl Application {
 
         Ok(Self {
             main_server: axum::serve(main_listener, main_router),
+            main_server_port,
             metrics_server: axum::serve(metrics_listener, metrics_router),
+            metrics_server_port,
         })
     }
 
@@ -134,7 +152,7 @@ impl Application {
 /// Create the main app axum router.
 ///
 /// # Panics
-/// Panics when not able to reach the datase.
+/// Panics when not able to reach the database.
 ///
 /// Panics if .
 pub async fn main_router(database_url: &str) -> Router {
