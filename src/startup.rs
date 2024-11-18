@@ -100,8 +100,6 @@ impl Application {
             .await
             .expect("database should be reachable");
 
-        //let local_addr = "127.0.0.1:8000";
-        //let main_listener = tokio::net::TcpListener::bind(local_addr)
         let main_listener =
             tokio::net::TcpListener::bind(format!("{main_listener_ip}:{main_listener_port}"))
                 .await
@@ -113,7 +111,7 @@ impl Application {
             "Main app service listening on {}",
             main_listener.local_addr().unwrap()
         );
-        //let metrics_listener = tokio::net::TcpListener::bind("127.0.0.1:8001").await?;
+
         let metrics_listener =
             tokio::net::TcpListener::bind(format!("{metrics_listener_ip}:{metrics_listener_port}"))
                 .await?;
