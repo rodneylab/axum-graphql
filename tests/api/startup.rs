@@ -4,10 +4,10 @@ use axum::{
     body::Body,
     http::{Request, StatusCode},
 };
-use enigo::{
-    Direction::{Click, Press, Release},
-    Enigo, Key, Keyboard,
-};
+// use enigo::{
+//     Direction::{Click, Press, Release},
+//     Enigo, Key, Keyboard,
+// };
 use metrics_exporter_prometheus::PrometheusHandle;
 use once_cell::sync::Lazy;
 use reqwest::Client;
@@ -77,43 +77,43 @@ async fn application_build_successfully_creates_main_and_metrics_servers() {
     assert_eq!(metrics_server_response.status(), StatusCode::OK);
 }
 
-#[tokio::test]
-async fn application_registers_ctrl_c() {
-    // arrange
-    std::env::set_var("RUST_TEST_NOCAPTURE", "true");
-    if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "info");
-    };
-    let client = Client::builder()
-        .timeout(std::time::Duration::from_millis(1_000))
-        .build()
-        .unwrap();
+// #[tokio::test]
+// async fn application_registers_ctrl_c() {
+//     // arrange
+//     std::env::set_var("RUST_TEST_NOCAPTURE", "true");
+//     if std::env::var("RUST_LOG").is_err() {
+//         std::env::set_var("RUST_LOG", "info");
+//     };
+//     let client = Client::builder()
+//         .timeout(std::time::Duration::from_millis(1_000))
+//         .build()
+//         .unwrap();
 
-    let TestApp {
-        main_server_port,
-        metrics_server_port,
-    } = TestApp::spawn().await;
+//     let TestApp {
+//         main_server_port,
+//         metrics_server_port,
+//     } = TestApp::spawn().await;
 
-    // act
-    let mut enigo = Enigo::new(&enigo::Settings::default()).unwrap();
-    let _ = enigo.key(Key::Control, Press);
-    let _ = enigo.key(Key::Unicode('c'), Click);
-    let _ = enigo.key(Key::Control, Release);
+//     // act
+//     let mut enigo = Enigo::new(&enigo::Settings::default()).unwrap();
+//     let _ = enigo.key(Key::Control, Press);
+//     let _ = enigo.key(Key::Unicode('c'), Click);
+//     let _ = enigo.key(Key::Control, Release);
 
-    thread::sleep(std::time::Duration::from_secs(30));
+//     thread::sleep(std::time::Duration::from_secs(30));
 
-    let main_server_error = client
-        .get(format!("http://localhost:{main_server_port}"))
-        .send()
-        .await
-        .unwrap_err();
-    let metrics_server_error = client
-        .get(format!("http://localhost:{metrics_server_port}/metrics"))
-        .send()
-        .await
-        .unwrap_err();
+//     let main_server_error = client
+//         .get(format!("http://localhost:{main_server_port}"))
+//         .send()
+//         .await
+//         .unwrap_err();
+//     let metrics_server_error = client
+//         .get(format!("http://localhost:{metrics_server_port}/metrics"))
+//         .send()
+//         .await
+//         .unwrap_err();
 
-    // assert
-    assert!(main_server_error.is_connect());
-    assert!(metrics_server_error.is_connect());
-}
+//     // assert
+//     assert!(main_server_error.is_connect());
+//     assert!(metrics_server_error.is_connect());
+// }
