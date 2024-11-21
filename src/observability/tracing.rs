@@ -1,7 +1,7 @@
 use std::env;
 
 use opentelemetry::{global, trace::TracerProvider, KeyValue};
-use opentelemetry_otlp::{ExportConfig, Protocol, WithExportConfig};
+use opentelemetry_otlp::{Protocol, WithExportConfig};
 use opentelemetry_sdk::{
     runtime,
     trace::{RandomIdGenerator, Sampler, Tracer},
@@ -57,21 +57,20 @@ pub fn create_tracing_subscriber_from_env() {
 }
 
 fn init_tracer(config: OpenTelemetryConfig) -> Tracer {
-    let tracer_provider = opentelemetry_otlp::new_pipeline()
-        .tracing()
-        .with_exporter(
-            opentelemetry_otlp::new_exporter()
-                .tonic()
-                .with_export_config(ExportConfig {
-                    endpoint: format!(
-                        "{}:{}",
-                        config.opentelemetry_agent_host, config.opentelemetry_agent_port
-                    ),
-                    timeout: std::time::Duration::from_secs(3),
-                    protocol: Protocol::Grpc,
-                }),
-        )
-        .with_trace_config(
+    let exporter = opentelemetry_otlp::SpanExporter::builder()
+        .with_tonic()
+        .with_endpoint(format!(
+            "{}:{}",
+            config.opentelemetry_agent_host, config.opentelemetry_agent_port
+        ))
+        .with_timeout(std::time::Duration::from_secs(3))
+        .with_protocol(Protocol::Grpc)
+        .build()
+        .expect("should be using a tokio runtime");
+
+    let tracer_provider = opentelemetry_sdk::trace::TracerProvider::builder()
+        .with_batch_exporter(exporter, runtime::Tokio)
+        .with_config(
             opentelemetry_sdk::trace::Config::default()
                 .with_sampler(Sampler::AlwaysOn)
                 .with_id_generator(RandomIdGenerator::default())
@@ -80,8 +79,7 @@ fn init_tracer(config: OpenTelemetryConfig) -> Tracer {
                     config.tracing_service_name,
                 )])),
         )
-        .install_batch(runtime::Tokio)
-        .expect("should be using a tokio runtime");
+        .build();
 
     global::set_tracer_provider(tracer_provider.clone());
     tracer_provider.tracer("axum-graphql")
