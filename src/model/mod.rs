@@ -1,4 +1,4 @@
-mod post;
+pub mod post;
 
 #[cfg(test)]
 mod tests;

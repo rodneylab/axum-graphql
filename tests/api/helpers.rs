@@ -1,7 +1,9 @@
 use metrics_exporter_prometheus::PrometheusHandle;
 use once_cell::sync::Lazy;
+use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
 
 use axum_graphql::{
+    database::run_migrations,
     observability::{
         metrics::create_prometheus_recorder, tracing::create_tracing_subscriber_from_env,
     },
@@ -46,5 +48,21 @@ impl TestApp {
             main_server_port,
             metrics_server_port,
         }
+    }
+
+    /// Generates fresh in-memory `SQLite` database and runs migrations.  Can be called from
+    /// each test.
+    pub async fn get_db_pool() -> SqlitePool {
+        let database_url = "sqlite://:memory:";
+
+        let db_pool = SqlitePoolOptions::new()
+            .max_connections(1)
+            .connect(database_url)
+            .await
+            .unwrap();
+
+        run_migrations(&db_pool).await;
+
+        db_pool
     }
 }
