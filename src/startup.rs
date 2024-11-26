@@ -36,7 +36,7 @@ impl ApplicationRouters {
     }
 }
 
-/// .
+/// Listen for and handle shutdown signals.
 ///
 /// # Panics
 ///
