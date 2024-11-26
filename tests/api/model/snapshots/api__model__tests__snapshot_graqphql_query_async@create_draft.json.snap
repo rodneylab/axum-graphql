@@ -1,7 +1,7 @@
 ---
-source: src/model/tests.rs
+source: tests/api/model/tests.rs
 expression: body_json
-input_file: src/model/snapshot_inputs/create_draft.json
+input_file: tests/api/model/snapshot_inputs/create_draft.json
 snapshot_kind: text
 ---
 {

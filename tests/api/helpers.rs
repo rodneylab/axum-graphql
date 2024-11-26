@@ -7,7 +7,7 @@ use axum_graphql::{
     observability::{
         metrics::create_prometheus_recorder, tracing::create_tracing_subscriber_from_env,
     },
-    startup::Application,
+    startup::{Application, ApplicationRouters},
 };
 
 pub static METRICS: Lazy<PrometheusHandle> = Lazy::new(create_prometheus_recorder);
@@ -48,6 +48,15 @@ impl TestApp {
             main_server_port,
             metrics_server_port,
         }
+    }
+
+    pub async fn spawn_routers() -> ApplicationRouters {
+        let database_url = "sqlite://:memory:";
+        let recorder_handle = Lazy::<PrometheusHandle>::force(&METRICS).clone();
+
+        ApplicationRouters::build(database_url, recorder_handle)
+            .await
+            .expect("database should be reachable")
     }
 
     /// Generates fresh in-memory `SQLite` database and runs migrations.  Can be called from

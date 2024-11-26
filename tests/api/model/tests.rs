@@ -4,10 +4,13 @@ use axum::{
     body::Body,
     http::{header, Method, Request, StatusCode},
 };
+use axum_graphql::startup::ApplicationRouters;
 use futures::executor::block_on;
 use http_body_util::BodyExt;
 use serde_json::{json, Value};
 use tower::{Service, ServiceExt};
+
+use crate::helpers::TestApp;
 
 mod helpers {
     use axum::{
@@ -18,13 +21,6 @@ mod helpers {
     use http_body_util::BodyExt;
     use serde_json::{json, Value};
     use tower::{Service, ServiceExt};
-
-    use crate::startup::main_router;
-
-    pub async fn get_app() -> Router {
-        let database_url = "sqlite://:memory:";
-        main_router(database_url).await
-    }
 
     pub async fn create_draft(app: &mut Router, title: &str, body: &str) -> i64 {
         let create_draft_json_request_body: Value = json!({
@@ -98,7 +94,7 @@ mod helpers {
 
 async fn snapshot_graqphql_query_async<P: AsRef<Path>>(path: P) {
     // arrange
-    let app = helpers::get_app().await;
+    let ApplicationRouters { main_router, .. } = TestApp::spawn_routers().await;
     let json_request_body: Value = serde_json::from_slice(
         &std::fs::read(&path).expect("file should exist and have read permissions set"),
     )
@@ -110,7 +106,7 @@ async fn snapshot_graqphql_query_async<P: AsRef<Path>>(path: P) {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)
@@ -143,7 +139,7 @@ async fn snapshot_graphql_queries() {
 #[tokio::test]
 async fn graphql_endpoint_responds_to_hello_query() {
     // arrange
-    let app = helpers::get_app().await;
+    let ApplicationRouters { main_router, .. } = TestApp::spawn_routers().await;
     let json_request_body: Value = json!({
         "operationName":"HelloQuery",
         "variables":{},
@@ -151,7 +147,7 @@ async fn graphql_endpoint_responds_to_hello_query() {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)
@@ -180,7 +176,9 @@ async fn graphql_endpoint_responds_to_hello_query() {
 #[tokio::test]
 async fn graphql_endpoint_responds_to_drafts_query() {
     // arrange
-    let mut app = helpers::get_app().await;
+    let ApplicationRouters {
+        mut main_router, ..
+    } = TestApp::spawn_routers().await;
     let drafts_json_request_body: Value = json!({
         "operationName":"DraftsQuery",
         "variables":{},
@@ -194,7 +192,7 @@ async fn graphql_endpoint_responds_to_drafts_query() {
         .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
         .body(Body::from(drafts_json_request_body.to_string()))
         .unwrap();
-    let response = ServiceExt::<Request<Body>>::ready(&mut app)
+    let response = ServiceExt::<Request<Body>>::ready(&mut main_router)
         .await
         .unwrap()
         .call(request)
@@ -233,7 +231,7 @@ async fn graphql_endpoint_responds_to_drafts_query() {
         .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
         .body(Body::from(create_draft_json_request_body.to_string()))
         .unwrap();
-    let response = ServiceExt::<Request<Body>>::ready(&mut app)
+    let response = ServiceExt::<Request<Body>>::ready(&mut main_router)
         .await
         .unwrap()
         .call(request)
@@ -260,7 +258,7 @@ async fn graphql_endpoint_responds_to_drafts_query() {
         .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
         .body(Body::from(drafts_json_request_body.to_string()))
         .unwrap();
-    let response = ServiceExt::<Request<Body>>::ready(&mut app)
+    let response = ServiceExt::<Request<Body>>::ready(&mut main_router)
         .await
         .unwrap()
         .call(request)
@@ -284,7 +282,7 @@ async fn graphql_endpoint_responds_to_drafts_query() {
 #[tokio::test]
 async fn posts_return_empty_array_when_no_posts_exist() {
     // arrange
-    let app = helpers::get_app().await;
+    let ApplicationRouters { main_router, .. } = TestApp::spawn_routers().await;
     let posts_json_request_body: Value = json!({
         "operationName":"PostsQuery",
         "variables":{},
@@ -292,7 +290,7 @@ async fn posts_return_empty_array_when_no_posts_exist() {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)
@@ -321,12 +319,17 @@ async fn posts_return_empty_array_when_no_posts_exist() {
 #[tokio::test]
 async fn posts_returns_existing_posts() {
     // arrange
-    let mut app = helpers::get_app().await;
-    let id_1 = helpers::create_draft(&mut app, "First Post Title", "First post body.").await;
-    let _id_2 = helpers::create_draft(&mut app, "Second Post Title", "Second post body.").await;
-    let id_3 = helpers::create_draft(&mut app, "Third Post Title", "Third post body.").await;
-    helpers::publish_draft(&mut app, id_1).await;
-    helpers::publish_draft(&mut app, id_3).await;
+    let ApplicationRouters {
+        mut main_router, ..
+    } = TestApp::spawn_routers().await;
+    let id_1 =
+        helpers::create_draft(&mut main_router, "First Post Title", "First post body.").await;
+    let _id_2 =
+        helpers::create_draft(&mut main_router, "Second Post Title", "Second post body.").await;
+    let id_3 =
+        helpers::create_draft(&mut main_router, "Third Post Title", "Third post body.").await;
+    helpers::publish_draft(&mut main_router, id_1).await;
+    helpers::publish_draft(&mut main_router, id_3).await;
     let posts_json_request_body: Value = json!({
         "operationName":"PostsQuery",
         "variables":{},
@@ -340,7 +343,7 @@ async fn posts_returns_existing_posts() {
         .header(header::CONTENT_TYPE, mime::APPLICATION_JSON.as_ref())
         .body(Body::from(posts_json_request_body.to_string()))
         .unwrap();
-    let response = ServiceExt::<Request<Body>>::ready(&mut app)
+    let response = ServiceExt::<Request<Body>>::ready(&mut main_router)
         .await
         .unwrap()
         .call(request)
@@ -367,7 +370,7 @@ async fn posts_returns_existing_posts() {
 #[tokio::test]
 async fn publish_returns_user_error_for_invalid_id() {
     // arrange
-    let app = helpers::get_app().await;
+    let ApplicationRouters { main_router, .. } = TestApp::spawn_routers().await;
     let id = 9_999;
     let publish_draft_json_request_body: Value = json!({
         "operationName":"PublishMutation",
@@ -393,7 +396,7 @@ async fn publish_returns_user_error_for_invalid_id() {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)
@@ -429,10 +432,15 @@ async fn publish_returns_user_error_for_invalid_id() {
 #[tokio::test]
 async fn publish_returns_user_expected_result_for_valid_input() {
     // arrange
-    let mut app = helpers::get_app().await;
-    let _id_1 = helpers::create_draft(&mut app, "First Post Title", "First post body.").await;
-    let id_2 = helpers::create_draft(&mut app, "Second Post Title", "Second post body.").await;
-    let _id_3 = helpers::create_draft(&mut app, "Third Post Title", "Third post body.").await;
+    let ApplicationRouters {
+        mut main_router, ..
+    } = TestApp::spawn_routers().await;
+    let _id_1 =
+        helpers::create_draft(&mut main_router, "First Post Title", "First post body.").await;
+    let id_2 =
+        helpers::create_draft(&mut main_router, "Second Post Title", "Second post body.").await;
+    let _id_3 =
+        helpers::create_draft(&mut main_router, "Third Post Title", "Third post body.").await;
     let publish_draft_json_request_body: Value = json!({
         "operationName":"PublishMutation",
         "variables":{},
@@ -457,7 +465,7 @@ async fn publish_returns_user_expected_result_for_valid_input() {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)
@@ -492,7 +500,7 @@ async fn publish_returns_user_expected_result_for_valid_input() {
 #[tokio::test]
 async fn delete_draft_returns_user_error_for_invalid_id() {
     // arrange
-    let app = helpers::get_app().await;
+    let ApplicationRouters { main_router, .. } = TestApp::spawn_routers().await;
     let id = 9_999;
     let delete_draft_json_request_body: Value = json!({
         "operationName":"DeleteDraftMutation",
@@ -518,7 +526,7 @@ async fn delete_draft_returns_user_error_for_invalid_id() {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)
@@ -554,10 +562,15 @@ async fn delete_draft_returns_user_error_for_invalid_id() {
 #[tokio::test]
 async fn delete_draft_returns_user_expected_result_for_valid_input() {
     // arrange
-    let mut app = helpers::get_app().await;
-    let _id_1 = helpers::create_draft(&mut app, "First Post Title", "First post body.").await;
-    let id_2 = helpers::create_draft(&mut app, "Second Post Title", "Second post body.").await;
-    let _id_3 = helpers::create_draft(&mut app, "Third Post Title", "Third post body.").await;
+    let ApplicationRouters {
+        mut main_router, ..
+    } = TestApp::spawn_routers().await;
+    let _id_1 =
+        helpers::create_draft(&mut main_router, "First Post Title", "First post body.").await;
+    let id_2 =
+        helpers::create_draft(&mut main_router, "Second Post Title", "Second post body.").await;
+    let _id_3 =
+        helpers::create_draft(&mut main_router, "Third Post Title", "Third post body.").await;
     let delete_draft_json_request_body: Value = json!({
         "operationName":"DeleteDraftMutation",
         "variables":{},
@@ -582,7 +595,7 @@ async fn delete_draft_returns_user_expected_result_for_valid_input() {
     });
 
     // act
-    let response = app
+    let response = main_router
         .oneshot(
             Request::builder()
                 .method(Method::POST)

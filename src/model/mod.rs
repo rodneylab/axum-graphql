@@ -1,8 +1,5 @@
 pub mod post;
 
-#[cfg(test)]
-mod tests;
-
 use async_graphql::{Context, EmptySubscription, Object, Schema};
 use sqlx::SqlitePool;
 
