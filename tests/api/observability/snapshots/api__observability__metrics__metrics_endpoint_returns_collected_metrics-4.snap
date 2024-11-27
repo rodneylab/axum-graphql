@@ -1,5 +1,5 @@
 ---
-source: src/observability/metrics.rs
+source: tests/api/observability/metrics.rs
 expression: labels
 snapshot_kind: text
 ---
