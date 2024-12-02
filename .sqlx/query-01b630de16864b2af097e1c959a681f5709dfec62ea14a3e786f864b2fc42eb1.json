@@ -1,0 +1,20 @@
+{
+  "db_name": "SQLite",
+  "query": "\nSELECT\n    name\nFROM\n    sqlite_schema\nWHERE\n    TYPE = 'table'\n    AND name NOT LIKE 'sqlite_%';\n",
+  "describe": {
+    "columns": [
+      {
+        "name": "name",
+        "ordinal": 0,
+        "type_info": "Text"
+      }
+    ],
+    "parameters": {
+      "Right": 0
+    },
+    "nullable": [
+      true
+    ]
+  },
+  "hash": "01b630de16864b2af097e1c959a681f5709dfec62ea14a3e786f864b2fc42eb1"
+}
