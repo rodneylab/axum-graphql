@@ -1,0 +1,6 @@
+---
+source: src/database.rs
+expression: "format!(\"{query_outcome:?}\")"
+snapshot_kind: text
+---
+[Record { name: Some("_sqlx_migrations") }, Record { name: Some("Post") }]
