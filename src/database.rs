@@ -88,7 +88,7 @@ mod tests {
         run_migrations(&db_pool).await;
 
         // assert
-        let query_outcome = sqlx::query!(
+        let query_outcome = sqlx::query_unchecked!(
             r#"
 SELECT
     name
