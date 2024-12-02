@@ -36,12 +36,34 @@ pub async fn run_migrations(db_pool: &SqlitePool) {
     }
 }
 
+/// Returns vector of ``SQLite`` database tables.  Created for use in snapshot unit testing.
+/// Created outside of test module, so `sqlx prepare` include this query.
+#[allow(dead_code)]
+async fn get_tables(db_pool: &SqlitePool) -> Vec<String> {
+    let query_outcome = sqlx::query_unchecked!(
+        r#"
+SELECT
+    name
+FROM
+    sqlite_schema
+WHERE
+    TYPE = 'table'
+    AND name NOT LIKE 'sqlite_%';
+"#
+    )
+    .fetch_all(db_pool)
+    .await
+    .unwrap();
+
+    query_outcome.iter().map(|val| format!("{val:?}")).collect()
+}
+
 #[cfg(test)]
 mod tests {
     use assert_fs::fixture::PathChild;
     use sqlx::SqlitePool;
 
-    use crate::database::{create, run_migrations};
+    use crate::database::{create, get_tables, run_migrations};
 
     #[tokio::test]
     async fn create_does_not_panic_if_database_already_exists() {
@@ -88,21 +110,24 @@ mod tests {
         run_migrations(&db_pool).await;
 
         // assert
-        let query_outcome = sqlx::query_unchecked!(
-            r#"
-SELECT
-    name
-FROM
-    sqlite_schema
-WHERE
-    TYPE = 'table'
-    AND name NOT LIKE 'sqlite_%';
-"#
-        )
-        .fetch_all(&db_pool)
-        .await
-        .unwrap();
+        // let query_outcome = sqlx::query_unchecked!(
+        //     r#"
+        // SELECT
+        // name
+        // FROM
+        // sqlite_schema
+        // WHERE
+        // TYPE = 'table'
+        // AND name NOT LIKE 'sqlite_%';
+        // "#
+        // )
+        // .fetch_all(&db_pool)
+        // .await
+        // .unwrap();
 
-        insta::assert_snapshot!(format!("{query_outcome:?}"));
+        let outcome = get_tables(&db_pool).await;
+
+        //insta::assert_snapshot!(format!("{query_outcome:?}"));
+        insta::assert_snapshot!(format!("{outcome:?}"));
     }
 }

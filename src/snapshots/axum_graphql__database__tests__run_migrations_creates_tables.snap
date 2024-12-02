@@ -1,6 +1,6 @@
 ---
 source: src/database.rs
-expression: "format!(\"{query_outcome:?}\")"
+expression: "format!(\"{outcome:?}\")"
 snapshot_kind: text
 ---
-[Record { name: Some("_sqlx_migrations") }, Record { name: Some("Post") }]
+["Record { name: Some(\"_sqlx_migrations\") }", "Record { name: Some(\"Post\") }"]
