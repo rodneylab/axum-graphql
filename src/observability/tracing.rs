@@ -70,15 +70,12 @@ fn init_tracer(config: OpenTelemetryConfig) -> Tracer {
 
     let tracer_provider = opentelemetry_sdk::trace::TracerProvider::builder()
         .with_batch_exporter(exporter, runtime::Tokio)
-        .with_config(
-            opentelemetry_sdk::trace::Config::default()
-                .with_sampler(Sampler::AlwaysOn)
-                .with_id_generator(RandomIdGenerator::default())
-                .with_resource(Resource::new(vec![KeyValue::new(
-                    SERVICE_NAME,
-                    config.tracing_service_name,
-                )])),
-        )
+        .with_sampler(Sampler::AlwaysOn)
+        .with_id_generator(RandomIdGenerator::default())
+        .with_resource(Resource::new(vec![KeyValue::new(
+            SERVICE_NAME,
+            config.tracing_service_name,
+        )]))
         .build();
 
     global::set_tracer_provider(tracer_provider.clone());
