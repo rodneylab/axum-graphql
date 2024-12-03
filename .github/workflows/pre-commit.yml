@@ -27,7 +27,7 @@ jobs:
         with:
           path: ~/.cargo/bin/sqlx ~/.cargo/bin/cargo-sqlx
           key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
-      - uses: dtolnay/rust-toolchain@4f366e621dc8fa63f557ca04b8f4361824a35a45 # stable
+      - uses: dtolnay/rust-toolchain@4f647fc679bcd3b11499ccb42104547c83dabe96 # stable
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
