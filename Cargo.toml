@@ -36,7 +36,7 @@ path = "src/main.rs"
 name = "axum-graphql"
 
 [dependencies]
-anyhow = "1.0.94"
+anyhow = "1.0.95"
 async-graphql = "7.0.13"
 async-graphql-axum = "7.0.13"
 axum = "0.7.9"
