@@ -1,2 +1,6 @@
+# https://github.com/crate-ci/typos
+# install:  cargo install typos-cli
+# run:      typos
+
 [files]
 extend-exclude = ["public/static/**/*", "public/fonts/**/*", "public/s/**/*"]
