@@ -12,7 +12,7 @@ env:
   CARGO_TERM_COLOR: always
   RUSTFLAGS: "-Dwarnings -Cinstrument-coverage"
   LLVM_PROFILE_FILE: "axum_graphql-%p-%m.profraw"
-  SQLX_VERSION: 0.8.2
+  SQLX_VERSION: 0.8.3
   SQLX_FEATURES: "rustls,sqlite"
 jobs:
   test:
