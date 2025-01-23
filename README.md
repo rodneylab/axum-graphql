@@ -16,11 +16,11 @@ APIs are minimal and represent a blog site back-end, with GraphQL queries to cre
 
 The app includes tracing, using OpenTelemetry, with data pushed to a [Jaeger Collector](https://www.jaegertracing.io/docs/1.62/deployment/#collectors) using the OpenTelemetry Protocol (**OTLP**). Metrics are also included, using Prometheus.
 
-Based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](https://oliverjumpertz.com/blog/how-to-build-a-powerful-graphql-api-with-rust/), updated to use Axum 0.7 and generate an OTLP tracing stream, instead of the Jaeger HTTP format (Jaeger collector is still kept).
+Based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](https://oliverjumpertz.com/blog/how-to-build-a-powerful-graphql-api-with-rust/), updated to use Axum 0.8 and generate an OTLP tracing stream, instead of the Jaeger HTTP format (Jaeger collector is still kept).
 
 ## Spinning up the app
 
-<img src="./images/usage.gif" alt="Terminal animation shows the user entering the following command: cargo run. Then the code compiles and server starts.  Status messages inform that Metrics service is listening on 127.0.0.1:8001, Migrations were run successfully, and Main app service is listening on 127.0.0.1:8000">
+<img src="./images/usage.gif" alt="Terminal animation shows the user entering the following command: cargo run. Then the code compiles and server starts.  Status messages inform that Metrics service is listening on 127.0.0.1:8001, Migrations were run successfully, and Main app service is listening on 127.0.0.1:8000" />
 
 1. Clone this repo and change into the new directory.
 
