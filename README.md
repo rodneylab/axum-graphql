@@ -1,4 +1,4 @@
-<img src="./images/rodneylab-github-axum-graphql.png" alt="Rodney Lab Axum Graph Q L Git Hub banner">
+<img src="./images/rodneylab-github-axum-graphql.png" alt="Rodney Lab Axum Graph Q L Git Hub banner" />
 
 <p align="center">
   <a aria-label="Open Rodney Lab site" href="https://rodneylab.com" rel="nofollow no:w
@@ -41,6 +41,14 @@ OpenTelemetry trace error occurred. Exporter otlp encountered the following erro
 ```
 
 This should be temporary.
+
+### SQLite Database
+
+The project database migrations create an SQLite database with a Post table,
+which has id, title,body and published fields. You can run GraphQL queries to
+create, read, update and delete from this table.
+
+<img src="./images/axum-graphql-sqlite-db-post-table.png" alt="Diagram representing database table.  The heading reads `Post`.  Below, the table columns, with associated type is listed: id (integer), title (text), body (text) and published (boolean).  A key icon appears within in the id column data, indicating id is a database primary key." />
 
 ### Example queries:
 
