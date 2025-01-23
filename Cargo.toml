@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2021"
 license = "BSD-3-Clause"
 repository = "https://github.com/rodneylab/axum-graphql"
-# axum v0.8.0 msrv is 1.75.0
-rust-version = "1.75.0"
+# async-graphql v7.0.12 msrv is 1.81.0
+rust-version = "1.81.0"
 description = "Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx."
 
 # Faster snapshot runs
@@ -37,9 +37,9 @@ name = "axum-graphql"
 
 [dependencies]
 anyhow = "1.0.95"
-async-graphql = "7.0.13"
-async-graphql-axum = "7.0.13"
-axum = "0.7.9"
+async-graphql = "7.0.14"
+async-graphql-axum = "7.0.14"
+axum = "0.8.1"
 dotenvy = "0.15.7"
 metrics = "0.24.1"
 metrics-exporter-prometheus = "0.16.1"

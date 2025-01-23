@@ -3,7 +3,7 @@ use std::future::ready;
 use axum::{extract::Extension, middleware, routing::get, serve::Serve, Router};
 use metrics_exporter_prometheus::PrometheusHandle;
 use sqlx::SqlitePool;
-use tokio::signal;
+use tokio::{net::TcpListener, signal};
 use tower_http::{compression::CompressionLayer, services::ServeDir, timeout::TimeoutLayer};
 
 use crate::{
@@ -72,9 +72,9 @@ pub async fn shutdown_signal() {
 }
 
 pub struct Application {
-    pub main_server: Serve<Router, Router>,
+    pub main_server: Serve<TcpListener, Router, Router>,
     pub main_server_port: u16,
-    pub metrics_server: Serve<Router, Router>,
+    pub metrics_server: Serve<TcpListener, Router, Router>,
     pub metrics_server_port: u16,
 }
 
@@ -100,12 +100,11 @@ impl Application {
             .await
             .expect("database should be reachable");
 
-        let main_listener =
-            tokio::net::TcpListener::bind(format!("{main_listener_ip}:{main_listener_port}"))
-                .await
-                .unwrap_or_else(|_| {
-                    panic!("`{main_listener_ip}:{main_listener_port}` should not already be in use")
-                });
+        let main_listener = TcpListener::bind(format!("{main_listener_ip}:{main_listener_port}"))
+            .await
+            .unwrap_or_else(|_| {
+                panic!("`{main_listener_ip}:{main_listener_port}` should not already be in use")
+            });
         let main_server_port = main_listener.local_addr().unwrap().port();
         tracing::info!(
             "Main app service listening on {}",
