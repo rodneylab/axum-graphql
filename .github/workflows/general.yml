@@ -41,7 +41,6 @@ jobs:
         run: ./scripts/init_db.sh
       - name: Check sqlx-data.json is up-to-date
         run: cargo sqlx prepare --check -- --bin axum-graphql
-        run: sudo apt-get update
       - name: Run tests
         run: cargo test
   fmt:
