@@ -45,7 +45,7 @@ This should be temporary.
 ### SQLite Database
 
 The project database migrations create an SQLite database with a Post table,
-which has id, title,body and published fields. You can run GraphQL queries to
+which has id, title, body and published fields. You can run GraphQL queries to
 create, read, update and delete from this table.
 
 <img src="./images/axum-graphql-sqlite-db-post-table.png" alt="Diagram representing database table.  The heading reads `Post`.  Below, the table columns, with associated type is listed: id (integer), title (text), body (text) and published (boolean).  A key icon appears within in the id column data, indicating id is a database primary key." />
