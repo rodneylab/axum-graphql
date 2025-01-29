@@ -5,3 +5,4 @@ video.tape
 *.profraw
 sqlite.db*
 /assets
+.DS_Store
