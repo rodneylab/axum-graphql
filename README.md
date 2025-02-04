@@ -10,6 +10,8 @@
   axum-graphql
 </h1>
 
+[![codecov](https://codecov.io/gh/rodneylab/axum-graphql/branch/main/graph/badge.svg?token=V9UQLFTRCJ)](https://codecov.io/gh/rodneylab/axum-graphql)
+
 **Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**
 
 APIs are minimal and represent a blog site back-end, with GraphQL queries to create and delete draft posts, as well as, publish them.
