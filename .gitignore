@@ -6,3 +6,4 @@ video.tape
 sqlite.db*
 /assets
 .DS_Store
+.cache
