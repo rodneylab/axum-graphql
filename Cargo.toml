@@ -43,7 +43,7 @@ metrics-exporter-prometheus = "0.16.2"
 opentelemetry = "0.27.1"
 opentelemetry-otlp = { version = "0.27.0", features = ["grpc-tonic"] }
 opentelemetry-semantic-conventions = "0.27.0"
-opentelemetry_sdk = { version = "0.27.1", features = ["rt-tokio"] }
+opentelemetry_sdk = { version = "0.28.0", features = ["rt-tokio"] }
 serde = { version = "1.0.217", features = ["derive"] }
 sqlx = { version = "0.8.3", features = ["runtime-tokio-rustls", "sqlite"] }
 tokio = { version = "1.43.0", features = ["full"] }
