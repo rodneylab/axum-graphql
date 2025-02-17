@@ -57,7 +57,7 @@ mod helpers {
         let publish_draft_json_request_body: Value = json!({
             "operationName":"PublishMutation",
             "variables":{},
-            "query": format!(r#"mutation PublishMutation {{
+            "query": format!("mutation PublishMutation {{
   publish(id: {id}) {{
     __typename
     ... on PublishSuccessResponse {{
@@ -74,7 +74,7 @@ mod helpers {
       }}
     }}
   }}
-}}"#),
+}}"),
         });
 
         let request = Request::builder()
@@ -375,7 +375,7 @@ async fn publish_returns_user_error_for_invalid_id() {
     let publish_draft_json_request_body: Value = json!({
         "operationName":"PublishMutation",
         "variables":{},
-        "query": format!(r#"mutation PublishMutation {{
+        "query": format!("mutation PublishMutation {{
   publish(id: {id}) {{
     __typename
     ... on PublishSuccessResponse {{
@@ -392,7 +392,7 @@ async fn publish_returns_user_error_for_invalid_id() {
       }}
     }}
   }}
-}}"#),
+}}"),
     });
 
     // act
@@ -444,7 +444,7 @@ async fn publish_returns_user_expected_result_for_valid_input() {
     let publish_draft_json_request_body: Value = json!({
         "operationName":"PublishMutation",
         "variables":{},
-        "query": format!(r#"mutation PublishMutation {{
+        "query": format!("mutation PublishMutation {{
   publish(id: {id_2}) {{
     __typename
     ... on PublishSuccessResponse {{
@@ -461,7 +461,7 @@ async fn publish_returns_user_expected_result_for_valid_input() {
       }}
     }}
   }}
-}}"#),
+}}"),
     });
 
     // act
@@ -505,7 +505,7 @@ async fn delete_draft_returns_user_error_for_invalid_id() {
     let delete_draft_json_request_body: Value = json!({
         "operationName":"DeleteDraftMutation",
         "variables":{},
-        "query": format!(r#"mutation DeleteDraftMutation {{
+        "query": format!("mutation DeleteDraftMutation {{
   deleteDraft(id: {id}) {{
     __typename
     ... on DeleteDraftSuccessResponse {{
@@ -522,7 +522,7 @@ async fn delete_draft_returns_user_error_for_invalid_id() {
       }}
     }}
   }}
-}}"#),
+}}"),
     });
 
     // act
@@ -574,7 +574,7 @@ async fn delete_draft_returns_user_expected_result_for_valid_input() {
     let delete_draft_json_request_body: Value = json!({
         "operationName":"DeleteDraftMutation",
         "variables":{},
-        "query": format!(r#"mutation DeleteDraftMutation {{
+        "query": format!("mutation DeleteDraftMutation {{
   deleteDraft(id: {id_2}) {{
     __typename
     ... on DeleteDraftSuccessResponse {{
@@ -591,7 +591,7 @@ async fn delete_draft_returns_user_expected_result_for_valid_input() {
       }}
     }}
   }}
-}}"#),
+}}"),
     });
 
     // act

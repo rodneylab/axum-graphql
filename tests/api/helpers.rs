@@ -1,5 +1,6 @@
 use metrics_exporter_prometheus::PrometheusHandle;
 use once_cell::sync::Lazy;
+use opentelemetry_sdk::trace::SdkTracerProvider;
 use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
 
 use axum_graphql::{
@@ -11,9 +12,7 @@ use axum_graphql::{
 };
 
 pub static METRICS: Lazy<PrometheusHandle> = Lazy::new(create_prometheus_recorder);
-static TRACING: Lazy<()> = Lazy::new(|| {
-    create_tracing_subscriber_from_env();
-});
+static TRACING: Lazy<Option<SdkTracerProvider>> = Lazy::new(create_tracing_subscriber_from_env);
 
 pub struct TestApp {
     pub main_server_port: u16,
@@ -22,7 +21,7 @@ pub struct TestApp {
 
 impl TestApp {
     pub async fn spawn() -> Self {
-        Lazy::force(&TRACING);
+        let tracer_provider = Lazy::force(&TRACING);
         let database_url = "sqlite://:memory:";
         let recorder_handle = Lazy::<PrometheusHandle>::force(&METRICS).clone();
 
@@ -42,7 +41,7 @@ impl TestApp {
         } = app;
 
         #[expect(clippy::let_underscore_future)]
-        let _ = tokio::spawn(app.run_until_stopped());
+        let _ = tokio::spawn(app.run_until_stopped(tracer_provider.clone()));
 
         Self {
             main_server_port,

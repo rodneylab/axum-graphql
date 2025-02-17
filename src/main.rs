@@ -16,7 +16,7 @@ use axum_graphql::{
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
 
-    create_tracing_subscriber_from_env();
+    let tracer_provider = create_tracing_subscriber_from_env();
 
     let database_url = env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite://sqlite.db".into());
     create_database(&database_url).await;
@@ -30,7 +30,7 @@ async fn main() -> std::io::Result<()> {
         ("127.0.0.1", 8001),
     )
     .await?;
-    application.run_until_stopped().await?;
+    application.run_until_stopped(tracer_provider).await?;
 
     Ok(())
 }

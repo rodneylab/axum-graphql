@@ -2,6 +2,7 @@ use std::future::ready;
 
 use axum::{extract::Extension, middleware, routing::get, serve::Serve, Router};
 use metrics_exporter_prometheus::PrometheusHandle;
+use opentelemetry_sdk::trace::SdkTracerProvider;
 use sqlx::SqlitePool;
 use tokio::{net::TcpListener, signal};
 use tower_http::{compression::CompressionLayer, services::ServeDir, timeout::TimeoutLayer};
@@ -40,12 +41,12 @@ impl ApplicationRouters {
 ///
 /// # Panics
 ///
-/// Panics if unable to install Ctrl +C handler.
-pub async fn shutdown_signal() {
+/// Panics if unable to install Ctrl-C handler.
+pub async fn shutdown_signal(tracer_provider: Option<SdkTracerProvider>) {
     let ctrl_c = async {
         signal::ctrl_c()
             .await
-            .expect("failed to install Ctrl+C handler");
+            .expect("failed to install Ctrl-C handler");
     };
 
     #[cfg(unix)]
@@ -62,11 +63,21 @@ pub async fn shutdown_signal() {
     tokio::select! {
         () = ctrl_c => {
             tracing::info!("Ctrl-C registered");
-            opentelemetry::global::shutdown_tracer_provider();
-        },
+            if let Some(value) = tracer_provider {
+                match value.shutdown() {
+                    Ok(()) => tracing::info!("Tracer provider shutdown."),
+                    Err(error) => tracing::error!("Error shutting down tracing provider: {error:?}"),
+                }
+        }},
         () = terminate => {
             tracing::info!("Terminate registered");
-            opentelemetry::global::shutdown_tracer_provider();
+            if let Some(value) = tracer_provider {
+                match value.shutdown() {
+                    Ok(()) => tracing::info!("Tracer provider shutdown."),
+                    Err(error) => tracing::error!("Error shutting down tracing provider: {error:?}"),
+                }
+            }
+
         },
     }
 }
@@ -135,11 +146,15 @@ impl Application {
     ///
     /// This function will return an error if the axum main server or metrics server returned an
     /// error.
-    pub async fn run_until_stopped(self) -> Result<(), std::io::Error> {
+    pub async fn run_until_stopped(
+        self,
+        tracer_provider: Option<SdkTracerProvider>,
+    ) -> Result<(), std::io::Error> {
         let (main_server, metrics_server) = tokio::join!(
-            self.main_server.with_graceful_shutdown(shutdown_signal()),
+            self.main_server
+                .with_graceful_shutdown(shutdown_signal(tracer_provider.clone())),
             self.metrics_server
-                .with_graceful_shutdown(shutdown_signal())
+                .with_graceful_shutdown(shutdown_signal(tracer_provider.clone()))
         );
         main_server?;
         metrics_server?;

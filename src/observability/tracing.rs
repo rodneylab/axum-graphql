@@ -1,13 +1,11 @@
 use std::env;
 
-use opentelemetry::{global, trace::TracerProvider, KeyValue};
+use opentelemetry::{global, trace::TracerProvider};
 use opentelemetry_otlp::{Protocol, WithExportConfig};
 use opentelemetry_sdk::{
-    runtime,
-    trace::{RandomIdGenerator, Sampler, Tracer},
+    trace::{RandomIdGenerator, Sampler, SdkTracerProvider},
     Resource,
 };
-use opentelemetry_semantic_conventions::resource::SERVICE_NAME;
 use tracing::Level;
 use tracing_opentelemetry::OpenTelemetryLayer;
 use tracing_subscriber::{layer::SubscriberExt, util::SubscriberInitExt};
@@ -24,7 +22,7 @@ struct OpenTelemetryConfig {
 ///
 /// Panics if `OPENTELEMETRY_ENABLED` environment variable exists and is not either `true` or
 /// `false`.
-pub fn create_tracing_subscriber_from_env() {
+pub fn create_tracing_subscriber_from_env() -> Option<SdkTracerProvider> {
     let opentelemetry_enabled: bool = env::var("OPENTELEMETRY_ENABLED")
         .unwrap_or_else(|_| "false".into())
         .parse()
@@ -32,7 +30,8 @@ pub fn create_tracing_subscriber_from_env() {
 
     if opentelemetry_enabled {
         let config = get_opentelemetry_config_from_env();
-        let tracer = init_tracer(config);
+        let tracer_provider = init_tracer(config);
+        let tracer = tracer_provider.tracer("axum-graphql");
 
         tracing_subscriber::registry()
             .with(tracing_subscriber::filter::LevelFilter::from_level(
@@ -43,6 +42,7 @@ pub fn create_tracing_subscriber_from_env() {
             .init();
 
         tracing::info!("Tracing subscriber created and initialised");
+        Some(tracer_provider)
     } else {
         println!("OpenTelemetry is not enabled, set `OPENTELEMETRY_ENABLED` to true, to enable it");
         tracing_subscriber::registry()
@@ -53,10 +53,11 @@ pub fn create_tracing_subscriber_from_env() {
             .init();
 
         tracing::info!("Tracing subscriber created and initialised");
+        None
     }
 }
 
-fn init_tracer(config: OpenTelemetryConfig) -> Tracer {
+fn init_tracer(config: OpenTelemetryConfig) -> SdkTracerProvider {
     let exporter = opentelemetry_otlp::SpanExporter::builder()
         .with_tonic()
         .with_endpoint(format!(
@@ -68,18 +69,19 @@ fn init_tracer(config: OpenTelemetryConfig) -> Tracer {
         .build()
         .expect("should be using a tokio runtime");
 
-    let tracer_provider = opentelemetry_sdk::trace::TracerProvider::builder()
-        .with_batch_exporter(exporter, runtime::Tokio)
+    let tracer_provider = opentelemetry_sdk::trace::SdkTracerProvider::builder()
+        .with_batch_exporter(exporter)
         .with_sampler(Sampler::AlwaysOn)
         .with_id_generator(RandomIdGenerator::default())
-        .with_resource(Resource::new(vec![KeyValue::new(
-            SERVICE_NAME,
-            config.tracing_service_name,
-        )]))
+        .with_resource(
+            Resource::builder()
+                .with_service_name(config.tracing_service_name)
+                .build(),
+        )
         .build();
-
     global::set_tracer_provider(tracer_provider.clone());
-    tracer_provider.tracer("axum-graphql")
+
+    tracer_provider
 }
 
 fn get_opentelemetry_config_from_env() -> OpenTelemetryConfig {
