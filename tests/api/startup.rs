@@ -13,7 +13,7 @@ use once_cell::sync::Lazy;
 use reqwest::Client;
 use tower::ServiceExt;
 
-use crate::helpers::{TestApp, METRICS};
+use crate::helpers::{METRICS, TestApp};
 use axum_graphql::startup::ApplicationRouters;
 
 #[tokio::test]

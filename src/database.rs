@@ -1,6 +1,6 @@
 use sqlx::{
-    migrate::{MigrateDatabase, Migrator},
     Sqlite, SqlitePool,
+    migrate::{MigrateDatabase, Migrator},
 };
 
 /// .

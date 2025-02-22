@@ -4,8 +4,8 @@ use async_graphql::{Context, EmptySubscription, Object, Schema};
 use sqlx::SqlitePool;
 
 use post::{
-    create_draft_mutation, delete_draft_mutation, drafts_query, posts_query, publish_mutation,
-    DeleteDraftResponse, Post, PublishResponse, ValidationError,
+    DeleteDraftResponse, Post, PublishResponse, ValidationError, create_draft_mutation,
+    delete_draft_mutation, drafts_query, posts_query, publish_mutation,
 };
 
 pub(crate) type ServiceSchema = Schema<QueryRoot, MutationRoot, EmptySubscription>;

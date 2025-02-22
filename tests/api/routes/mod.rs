@@ -1,10 +1,10 @@
 use axum::{
     body::Body,
-    http::{header, Method, Request, StatusCode},
+    http::{Method, Request, StatusCode, header},
 };
 use axum_graphql::startup::ApplicationRouters;
 use http_body_util::BodyExt;
-use serde_json::{json, Value};
+use serde_json::{Value, json};
 use tower::util::ServiceExt;
 
 use crate::helpers::TestApp;

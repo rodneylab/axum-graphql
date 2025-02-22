@@ -1,6 +1,6 @@
 use std::future::ready;
 
-use axum::{extract::Extension, middleware, routing::get, serve::Serve, Router};
+use axum::{Router, extract::Extension, middleware, routing::get, serve::Serve};
 use metrics_exporter_prometheus::PrometheusHandle;
 use opentelemetry_sdk::trace::SdkTracerProvider;
 use sqlx::SqlitePool;
