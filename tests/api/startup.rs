@@ -47,10 +47,12 @@ async fn application_router_build_successfully_creates_main_and_metrics_routers(
 #[tokio::test]
 async fn application_build_successfully_creates_main_and_metrics_servers() {
     // arrange
-    std::env::set_var("RUST_TEST_NOCAPTURE", "true");
-    if std::env::var("RUST_LOG").is_err() {
-        std::env::set_var("RUST_LOG", "info");
-    };
+    unsafe {
+        std::env::set_var("RUST_TEST_NOCAPTURE", "true");
+        if std::env::var("RUST_LOG").is_err() {
+            std::env::set_var("RUST_LOG", "info");
+        };
+    }
     let client = Client::builder()
         .timeout(std::time::Duration::from_millis(1_000))
         .build()
