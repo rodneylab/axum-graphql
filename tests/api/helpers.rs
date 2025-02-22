@@ -1,7 +1,7 @@
 use metrics_exporter_prometheus::PrometheusHandle;
 use once_cell::sync::Lazy;
 use opentelemetry_sdk::trace::SdkTracerProvider;
-use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
+use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
 
 use axum_graphql::{
     database::run_migrations,

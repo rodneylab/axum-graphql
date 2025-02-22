@@ -1,8 +1,7 @@
 use crate::helpers::TestApp;
 use axum_graphql::model::post::{
-    create_draft_mutation, delete_draft_mutation, posts_query, publish_mutation,
     DeleteDraftErrorResponse, DeleteDraftResponse, DeleteDraftSuccessResponse, Post,
-    UserInputError,
+    UserInputError, create_draft_mutation, delete_draft_mutation, posts_query, publish_mutation,
 };
 use sqlx::sqlite::SqlitePoolOptions;
 

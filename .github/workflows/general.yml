@@ -10,7 +10,7 @@ on:
 permissions: read-all
 env:
   CARGO_TERM_COLOR: always
-  RUST_TOOLCHAIN: 1.84.1
+  RUST_TOOLCHAIN: 1.85
   RUSTFLAGS: "-Dwarnings -Cinstrument-coverage"
   LLVM_PROFILE_FILE: "axum_graphql-%p-%m.profraw"
   SQLX_VERSION: 0.8.3

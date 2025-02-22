@@ -1,6 +1,6 @@
 use std::future::ready;
 
-use axum::{extract::Extension, middleware, routing::get, serve::Serve, Router};
+use axum::{Router, extract::Extension, middleware, routing::get, serve::Serve};
 use metrics_exporter_prometheus::PrometheusHandle;
 use opentelemetry_sdk::trace::SdkTracerProvider;
 use sqlx::SqlitePool;
@@ -24,8 +24,6 @@ impl ApplicationRouters {
     ///
     /// # Errors
     /// Returns an error if the database is not reachable
-    ///
-    /// This function will return an error if .
     pub async fn build(
         database_url: &str,
         recorder_handle: PrometheusHandle,
@@ -90,7 +88,7 @@ pub struct Application {
 }
 
 impl Application {
-    /// Build an axum main app and a metrics app.
+    /// Build an axum main app, and a metrics app.
     ///
     /// # Panics
     /// Panics if the database is not reachable, if the main app or merics port is already in use.

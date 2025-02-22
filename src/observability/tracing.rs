@@ -3,8 +3,8 @@ use std::env;
 use opentelemetry::{global, trace::TracerProvider};
 use opentelemetry_otlp::{Protocol, WithExportConfig};
 use opentelemetry_sdk::{
-    trace::{RandomIdGenerator, Sampler, SdkTracerProvider},
     Resource,
+    trace::{RandomIdGenerator, Sampler, SdkTracerProvider},
 };
 use tracing::Level;
 use tracing_opentelemetry::OpenTelemetryLayer;

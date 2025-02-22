@@ -1,11 +1,11 @@
 [package]
 name = "axum-graphql"
 version = "0.1.0"
-edition = "2021"
+edition = "2024"
 license = "BSD-3-Clause"
 repository = "https://github.com/rodneylab/axum-graphql"
-# async-graphql v7.0.12 msrv is 1.81.0
-rust-version = "1.81.0"
+# rust edition 2024 msrv is 1.85.0
+rust-version = "1.85.0"
 description = "Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx."
 
 # Faster snapshot runs
