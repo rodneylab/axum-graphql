@@ -3,12 +3,13 @@
 ^\./images/usage\.gif
 ^\./sqlite\.db
 ^file:\/\/.*
+^http://localhost:3000/.*
+^https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/.*
 ^sqlite:\/\/.*
 http://default-url.com/
 http://jaeger-query:16686/
 http://localhost/
 http://localhost:16686/search
-^http://localhost:3000/.*
 http://localhost:8000/
 http://localhost:8001/metrics
 http://localhost:9090/
