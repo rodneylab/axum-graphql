@@ -1,4 +1,6 @@
-# files listed here will be ignored by cargo watch, it also ignores .gitignore files.  Other tools migth use this file.  Add files to .gitignore instead, if cargo watch should ignore them and they don't need version control.
+# files listed here will be ignored by cargo watch, it also ignores .gitignore files.  Other tools
+# might use this file.  Add files to .gitignore instead, if cargo watch should ignore them and they
+# don't need version control.
 **/*.snap
 **/*.snap.new
 **/rusty-tags.vi

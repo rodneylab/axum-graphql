@@ -1,36 +1,27 @@
-use std::future::ready;
-
-use axum::{Router, extract::Extension, middleware, routing::get, serve::Serve};
-use metrics_exporter_prometheus::PrometheusHandle;
-use opentelemetry_sdk::trace::SdkTracerProvider;
+use axum::{Router, serve::Serve};
+use opentelemetry_sdk::error::OTelSdkError;
 use sqlx::SqlitePool;
 use tokio::{net::TcpListener, signal};
-use tower_http::{compression::CompressionLayer, services::ServeDir, timeout::TimeoutLayer};
 
 use crate::{
     database::run_migrations,
     model::get_schema,
-    observability::metrics::track as track_metrics,
-    routes::{graphql_handler, graphql_playground, health},
+    observability::{OpenTelemetryProviders, shutdown_opentelemetry_providers},
+    router::init_router,
 };
 
-pub struct ApplicationRouters {
-    pub main_router: Router,
-    pub metrics_router: Router,
+pub struct ApplicationRouter {
+    pub router: Router,
 }
 
-impl ApplicationRouters {
-    /// Build the main app and metrics app routers.  These routers can be used in unit tests.
+impl ApplicationRouter {
+    /// Build the app router.  This router can be used in unit tests.
     ///
     /// # Errors
     /// Returns an error if the database is not reachable
-    pub async fn build(
-        database_url: &str,
-        recorder_handle: PrometheusHandle,
-    ) -> Result<Self, std::io::Error> {
+    pub async fn build(database_url: &str) -> Result<Self, std::io::Error> {
         Ok(Self {
-            main_router: main_router(database_url).await,
-            metrics_router: metrics_router(recorder_handle),
+            router: router(database_url).await,
         })
     }
 }
@@ -40,7 +31,7 @@ impl ApplicationRouters {
 /// # Panics
 ///
 /// Panics if unable to install Ctrl-C handler.
-pub async fn shutdown_signal(tracer_provider: Option<SdkTracerProvider>) {
+pub async fn shutdown_signal(open_telemetry_providers: Option<OpenTelemetryProviders>) {
     let ctrl_c = async {
         signal::ctrl_c()
             .await
@@ -61,84 +52,55 @@ pub async fn shutdown_signal(tracer_provider: Option<SdkTracerProvider>) {
     tokio::select! {
         () = ctrl_c => {
             tracing::info!("Ctrl-C registered");
-            if let Some(value) = tracer_provider {
-                match value.shutdown() {
-                    Ok(()) => tracing::info!("Tracer provider shutdown."),
-                    Err(error) => tracing::error!("Error shutting down tracing provider: {error:?}"),
-                }
-        }},
+            if let Some(value) = open_telemetry_providers {
+                shutdown_opentelemetry_providers(&value);
+            }
+        },
         () = terminate => {
             tracing::info!("Terminate registered");
-            if let Some(value) = tracer_provider {
-                match value.shutdown() {
-                    Ok(()) => tracing::info!("Tracer provider shutdown."),
-                    Err(error) => tracing::error!("Error shutting down tracing provider: {error:?}"),
-                }
+            if let Some(value) = open_telemetry_providers {
+                shutdown_opentelemetry_providers(&value);
             }
-
-        },
+        }
     }
 }
 
 pub struct Application {
-    pub main_server: Serve<TcpListener, Router, Router>,
-    pub main_server_port: u16,
-    pub metrics_server: Serve<TcpListener, Router, Router>,
-    pub metrics_server_port: u16,
+    pub server: Serve<TcpListener, Router, Router>,
+    pub port: u16,
 }
 
 impl Application {
-    /// Build an axum main app, and a metrics app.
+    /// Build an axum app.
     ///
     /// # Panics
-    /// Panics if the database is not reachable, if the main app or merics port is already in use.
+    /// Panics if the database is not reachable or if the port is already in use.
     ///
     /// # Errors
-    ///
-    /// This function will return an error if the metric port is already in use.
+    /// Errors if the listen port or address is invalid.
     pub async fn build(
         database_url: &str,
-        recorder_handle: PrometheusHandle,
-        (main_listener_ip, main_listener_port): (&str, u16),
-        (metrics_listener_ip, metrics_listener_port): (&str, u16),
+        (listener_ip, listener_port): (&str, u16),
     ) -> Result<Self, std::io::Error> {
-        let ApplicationRouters {
-            main_router,
-            metrics_router,
-        } = ApplicationRouters::build(database_url, recorder_handle)
+        let ApplicationRouter { router } = ApplicationRouter::build(database_url)
             .await
             .expect("database should be reachable");
 
-        let main_listener = TcpListener::bind(format!("{main_listener_ip}:{main_listener_port}"))
+        let listener = TcpListener::bind(format!("{listener_ip}:{listener_port}"))
             .await
             .unwrap_or_else(|_| {
-                panic!("`{main_listener_ip}:{main_listener_port}` should not already be in use")
+                panic!("`{listener_ip}:{listener_port}` should not already be in use")
             });
-        let main_server_port = main_listener.local_addr().unwrap().port();
-        tracing::info!(
-            "Main app service listening on {}",
-            main_listener.local_addr().unwrap()
-        );
-
-        let metrics_listener =
-            tokio::net::TcpListener::bind(format!("{metrics_listener_ip}:{metrics_listener_port}"))
-                .await?;
-        let metrics_server_port = metrics_listener.local_addr().unwrap().port();
-
-        tracing::info!(
-            "Metrics service listening on {}",
-            metrics_listener.local_addr().unwrap()
-        );
+        let port = listener.local_addr().unwrap().port();
+        tracing::info!("App service listening on {}", listener.local_addr()?);
 
         Ok(Self {
-            main_server: axum::serve(main_listener, main_router),
-            main_server_port,
-            metrics_server: axum::serve(metrics_listener, metrics_router),
-            metrics_server_port,
+            server: axum::serve(listener, router),
+            port,
         })
     }
 
-    /// Run both apps.  Can be used in tests and when running the app in production.
+    /// Run the app.  Can be used in tests and when running the app in production.
     ///
     /// # Errors
     ///
@@ -146,16 +108,11 @@ impl Application {
     /// error.
     pub async fn run_until_stopped(
         self,
-        tracer_provider: Option<SdkTracerProvider>,
+        opentelemetry_providers: Option<OpenTelemetryProviders>,
     ) -> Result<(), std::io::Error> {
-        let (main_server, metrics_server) = tokio::join!(
-            self.main_server
-                .with_graceful_shutdown(shutdown_signal(tracer_provider.clone())),
-            self.metrics_server
-                .with_graceful_shutdown(shutdown_signal(tracer_provider.clone()))
-        );
-        main_server?;
-        metrics_server?;
+        self.server
+            .with_graceful_shutdown(shutdown_signal(opentelemetry_providers.clone()))
+            .await?;
 
         Ok(())
     }
@@ -167,8 +124,8 @@ impl Application {
 /// Panics when not able to reach the database.
 ///
 /// Panics if .
-pub async fn main_router(database_url: &str) -> Router {
-    tracing::info!("Main app service starting");
+pub async fn router(database_url: &str) -> Router {
+    tracing::info!("App service starting");
 
     let db_pool = SqlitePool::connect(database_url)
         .await
@@ -177,19 +134,5 @@ pub async fn main_router(database_url: &str) -> Router {
 
     let schema = get_schema(db_pool);
 
-    Router::new()
-        .route("/", get(graphql_playground).post(graphql_handler))
-        .route("/health", get(health))
-        // serve GraphQL Playground CDN assets locally
-        .nest_service("/assets", ServeDir::new("public"))
-        .layer(CompressionLayer::new())
-        .layer((
-            middleware::from_fn(track_metrics),
-            TimeoutLayer::new(std::time::Duration::from_secs(10)),
-        ))
-        .layer(Extension(schema))
-}
-
-pub fn metrics_router(recorder_handle: PrometheusHandle) -> Router {
-    Router::new().route("/metrics", get(move || ready(recorder_handle.render())))
+    init_router(schema)
 }

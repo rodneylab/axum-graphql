@@ -110,24 +110,7 @@ mod tests {
         run_migrations(&db_pool).await;
 
         // assert
-        // let query_outcome = sqlx::query_unchecked!(
-        //     r#"
-        // SELECT
-        // name
-        // FROM
-        // sqlite_schema
-        // WHERE
-        // TYPE = 'table'
-        // AND name NOT LIKE 'sqlite_%';
-        // "#
-        // )
-        // .fetch_all(&db_pool)
-        // .await
-        // .unwrap();
-
         let outcome = get_tables(&db_pool).await;
-
-        //insta::assert_snapshot!(format!("{query_outcome:?}"));
         insta::assert_snapshot!(format!("{outcome:?}"));
     }
 }
