@@ -1,6 +1,23 @@
 services:
+  otel-collector:
+    image: otel/opentelemetry-collector-contrib:0.121.0@sha256:789689988e379c58ac12b07718dbcf4b23c2214bd804173c1c77af346d381c15
+    volumes:
+      - ./otel-collector-config.yaml:/etc/otel/config.yaml
+    command:
+      - '--config=/etc/otel/config.yaml'
+    ports:
+      - 1888:1888 # pprof extension
+      - 8888:8888 # Prometheus metrics exposed by the Collector
+      - 8889:8889 # Prometheus exporter metrics
+      - 13133:13133 # health_check extension
+      - 4317:4317 # OTLP gRPC receiver
+      - 4318:4318 # OTLP http receiver
+      - 55679:55679 # zpages extension     - loki
+    depends_on:
+      - jaeger-collector
+      - loki
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.62.0@sha256:8d96eeb6c6da554c0d7964d1ae5046e6f78f745a5fb89253224e684f21a45774
+    image: jaegertracing/jaeger-collector:1.67.0@sha256:7c94da406b6e186c756e257bca9954fca3c8be1b5e0b05f377f4dacdf0bcce06
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -10,19 +27,19 @@ services:
     environment:
       - SAMPLING_CONFIG_TYPE=adaptive
     ports:
-      - '4317:4317'
-      - '4318:4318'
+      - '4317'
+      - '4318'
     restart: on-failure
     depends_on:
       - cassandra-schema
   cassandra:
-    image: cassandra:5.0.2@sha256:4f53edaa4580f6f9575f5e2a9931878fad2f7064e39e1a62899fdc3231e19aef
+    image: cassandra:5.0.3@sha256:70b40a2025d450f7865c5ec6f1ebea13108166f81fe41462069690cb4d9690f2
   cassandra-schema:
     image: jaegertracing/jaeger-cassandra-schema:1.62.0@sha256:8836a0806c4863eea60df00c835f1514955ec134d71d0be8a9e49ee53c7f7431
     depends_on:
       - cassandra
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.62.0@sha256:f2914dff723b68c4b96daf8ea8d8f308c9684046369f3202f6b0b89e9d937109
+    image: jaegertracing/jaeger-query:1.62.0@sha256:e3dd18391fc04065d8edf5efbbefe33f3e865b7f6175e81a2ee284085a73f63d
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -32,44 +49,57 @@ services:
     restart: on-failure
     depends_on:
       - cassandra-schema
+  prometheus:
+    image: prom/prometheus:v3.2.1@sha256:6927e0919a144aa7616fd0137d4816816d42f6b816de3af269ab065250859a62
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    command: --web.enable-lifecycle --web.enable-otlp-receiver --config.file=/etc/prometheus/prometheus.yml
+    restart: always
+    ports:
+      - "9090:9090"
   loki:
-    image: grafana/loki:3.4@sha256:58a6c186ce78ba04d58bfe2a927eff296ba733a430df09645d56cdc158f3ba08
+    image: grafana/loki:3.4.2@sha256:58a6c186ce78ba04d58bfe2a927eff296ba733a430df09645d56cdc158f3ba08
     ports:
       - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - loki
   grafana:
     image: grafana/grafana:11.5.2@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
     environment:
+      - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
       - GF_AUTH_ANONYMOUS_ENABLED=true
       - GF_AUTH_BASIC_ENABLED=false
+      - GF_FEATURE_TOGGLES_ENABLE=accessControlOnCall
+      - GF_INSTALL_PLUGINS=https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/grafana-lokiexplore-app-latest.zip;grafana-lokiexplore-app
     ports:
       - 3000:3000/tcp
-    entrypoint:
-      - sh
-      - -euc
-      - |
-        mkdir -p /etc/grafana/provisioning/datasources
-        cat <<EOF > /etc/grafana/provisioning/datasources/ds.yaml
-        apiVersion: 1
-        datasources:
-        - name: Loki
-          type: loki
-          access: proxy
-          orgId: 1
-          url: 'http://loki:3100'
-          basicAuth: false
-          isDefault: true
-          version: 1
-          editable: true
-        EOF
-        /run.sh
-    networks:
-      - loki
-networks:
-  loki:
-    driver: bridge
+    volumes:
+      - ./grafana:/etc/grafana/provisioning
+  pyrra-api:
+    image: ghcr.io/pyrra-dev/pyrra:v0.8.2@sha256:1a40a176d7a358e3b59ba0edf3a6d2aa6e4df72cf6a40b97c3d7b0e9a0a0c412
+    container_name: pyrra_api
+    restart: always
+    command:
+      - api
+      - --prometheus-url=http://prometheus:9090
+      - --prometheus-external-url=http://localhost:9090
+      - --api-url=http://pyrra-filesystem:9444
+    ports:
+      - "9099:9099"
+  pyrra-filesystem:
+    image: ghcr.io/pyrra-dev/pyrra:v0.8.2@sha256:1a40a176d7a358e3b59ba0edf3a6d2aa6e4df72cf6a40b97c3d7b0e9a0a0c412
+    user: root
+    container_name: pyrra_filesystem
+    restart: always
+    command:
+      - filesystem
+      - --prometheus-url=http://prometheus:9090
+    volumes:
+      - ./pyrra:/etc/pyrra
+      - prometheus_pyrra:/etc/prometheus/pyrra
+volumes:
+  prometheus-data:
+  prometheus_pyrra: {}

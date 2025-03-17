@@ -8,40 +8,27 @@ use axum::{
 //     Direction::{Click, Press, Release},
 //     Enigo, Key, Keyboard,
 // };
-use metrics_exporter_prometheus::PrometheusHandle;
-use once_cell::sync::Lazy;
 use reqwest::Client;
 use tower::ServiceExt;
 
-use crate::helpers::{METRICS, TestApp};
-use axum_graphql::startup::ApplicationRouters;
+use crate::helpers::TestApp;
+use axum_graphql::startup::ApplicationRouter;
 
 #[tokio::test]
 async fn application_router_build_successfully_creates_main_and_metrics_routers() {
     // arrange
     let database_url = "sqlite://:memory:";
-    let recorder_handle: PrometheusHandle = Lazy::<PrometheusHandle>::force(&METRICS).clone();
 
     // act
-    let routers = ApplicationRouters::build(database_url, recorder_handle.clone())
-        .await
-        .unwrap();
-    let ApplicationRouters {
-        main_router,
-        metrics_router,
-    } = routers;
-    let main_server_response = main_router
+    let routers = ApplicationRouter::build(database_url).await.unwrap();
+    let ApplicationRouter { router } = routers;
+    let main_server_response = router
         .oneshot(Request::get("/").body(Body::empty()).unwrap())
-        .await
-        .unwrap();
-    let metrics_server_response = metrics_router
-        .oneshot(Request::get("/metrics").body(Body::empty()).unwrap())
         .await
         .unwrap();
 
     // assert
     assert_eq!(main_server_response.status(), StatusCode::OK);
-    assert_eq!(metrics_server_response.status(), StatusCode::OK);
 }
 
 #[tokio::test]
@@ -59,24 +46,15 @@ async fn application_build_successfully_creates_main_and_metrics_servers() {
         .unwrap();
 
     // act
-    let TestApp {
-        main_server_port,
-        metrics_server_port,
-    } = TestApp::spawn().await;
+    let TestApp { port } = TestApp::spawn().await;
     let main_server_response = client
-        .get(format!("http://localhost:{main_server_port}"))
-        .send()
-        .await
-        .unwrap();
-    let metrics_server_response = client
-        .get(format!("http://localhost:{metrics_server_port}/metrics"))
+        .get(format!("http://localhost:{port}"))
         .send()
         .await
         .unwrap();
 
     // assert
     assert_eq!(main_server_response.status(), StatusCode::OK);
-    assert_eq!(metrics_server_response.status(), StatusCode::OK);
 }
 
 // #[tokio::test]
@@ -92,7 +70,7 @@ async fn application_build_successfully_creates_main_and_metrics_servers() {
 //         .unwrap();
 
 //     let TestApp {
-//         main_server_port,
+//         port,
 //         metrics_server_port,
 //     } = TestApp::spawn().await;
 
@@ -105,7 +83,7 @@ async fn application_build_successfully_creates_main_and_metrics_servers() {
 //     thread::sleep(std::time::Duration::from_secs(30));
 
 //     let main_server_error = client
-//         .get(format!("http://localhost:{main_server_port}"))
+//         .get(format!("http://localhost:{port}"))
 //         .send()
 //         .await
 //         .unwrap_err();

@@ -2,35 +2,23 @@
 
 use std::env;
 
-use dotenvy::dotenv;
-
 use axum_graphql::{
-    database::create as create_database,
-    observability::{
-        metrics::create_prometheus_recorder, tracing::create_tracing_subscriber_from_env,
-    },
+    database::create as create_database, observability::initialise_observability,
     startup::Application,
 };
+use dotenvy::dotenv;
 
 #[tokio::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> anyhow::Result<()> {
     dotenv().ok();
 
-    let tracer_provider = create_tracing_subscriber_from_env();
+    let otel_providers = initialise_observability();
 
     let database_url = env::var("DATABASE_URL").unwrap_or_else(|_| "sqlite://sqlite.db".into());
     create_database(&database_url).await;
 
-    let recorder_handle = create_prometheus_recorder();
-
-    let application = Application::build(
-        &database_url,
-        recorder_handle,
-        ("127.0.0.1", 8000),
-        ("127.0.0.1", 8001),
-    )
-    .await?;
-    application.run_until_stopped(tracer_provider).await?;
+    let application = Application::build(&database_url, ("127.0.0.1", 8000)).await?;
+    application.run_until_stopped(otel_providers).await?;
 
     Ok(())
 }

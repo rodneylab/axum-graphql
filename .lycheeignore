@@ -4,10 +4,16 @@
 ^\./sqlite\.db
 ^file:\/\/.*
 ^sqlite:\/\/.*
+http://default-url.com/
+http://jaeger-query:16686/
 http://localhost/
 http://localhost:16686/search
+^http://localhost:3000/.*
 http://localhost:8000/
 http://localhost:8001/metrics
+http://localhost:9090/
 http://localhost:9093/
 http://loki:3100/
+http://prometheus:9090/
+http://pyrra-filesystem:9444/
 https://fonts\.googleapis\.com/css
