@@ -1,5 +1,4 @@
 use axum::{Router, serve::Serve};
-use opentelemetry_sdk::error::OTelSdkError;
 use sqlx::SqlitePool;
 use tokio::{net::TcpListener, signal};
 
