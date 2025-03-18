@@ -12,13 +12,20 @@
 
 [![codecov](https://codecov.io/gh/rodneylab/axum-graphql/branch/main/graph/badge.svg?token=V9UQLFTRCJ)](https://codecov.io/gh/rodneylab/axum-graphql)
 
-**Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**
+**Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**:with
 
 APIs are minimal and represent a blog site back-end, with GraphQL queries to create and delete draft posts, as well as, publish them.
 
-The app includes tracing, using OpenTelemetry, with data pushed to a [Jaeger Collector](https://www.jaegertracing.io/docs/1.62/deployment/#collectors) using the OpenTelemetry Protocol (**OTLP**). Metrics are also included, using Prometheus.
+The app is based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](https://oliverjumpertz.com/blog/how-to-build-a-powerful-graphql-api-with-rust/), updated to use Axum 0.8. It also has more extensive observability, implemented using OpenTelemetry. Data are pushed from the app to an OpenTelemetry collector, which in turn:
 
-Based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](https://oliverjumpertz.com/blog/how-to-build-a-powerful-graphql-api-with-rust/), updated to use Axum 0.8 and generate an OTLP tracing stream, instead of the Jaeger HTTP format (Jaeger collector is still kept).
+- has a Prometheus metrics endpoint;
+- pushes traces to a Jaeger collector, which exposes a Jaeger Query UI endpoint; and
+- exports logs to a Loki endpoint.
+
+OpenTelemetry collector, Prometheus, Jaeger Collector, Jaeger Query and Loki all
+get spun up via [`docker-compose`](./docker-compose.yml). Additionally, the
+docker-compose configuration initialises a Grafana session (collecting all
+previously mentioned observability components into a single interface).
 
 ## Spinning up the app
 
@@ -47,7 +54,7 @@ This should be temporary.
 ### SQLite Database
 
 The project database migrations create an SQLite database with a Post table,
-which has id, title, body and published fields. You can run GraphQL queries to
+which has `id`, `title`, `body` and `published` fields. You can run GraphQL queries to
 create, read, update and delete from this table.
 
 <img src="./images/axum-graphql-sqlite-db-post-table.png" alt="Diagram representing database table.  The heading reads `Post`.  Below, the table columns, with associated type is listed: id (integer), title (text), body (text) and published (boolean).  A key icon appears within in the id column data, indicating id is a database primary key." />
@@ -115,11 +122,13 @@ Metrics raw output: http://localhost:8001/metrics
 
 Jaeger Query UI: http://localhost:16686/search
 
+Grafana: http://localhost:3000/
+
 ## What's inside?
 
 ### tracing
 
-The tracing service is provided via a Jaeger Collector, Jaeger Query UI and a [Cassandra database](https://cassandra.apache.org/_/index.html), all running in Docker, and configured in [`docker-compose.yml`](./docker-compose.yml). The jaeger-all-in-one image has now been deprecated, as well as `jaeger-agent`. `jaeger-all-in-one` supported in-memory storage, and this is not supported by `jaeger-collector`. Instead, you need to create a Cassandra (or [Elasticsearch](https://hub.docker.com/_/elasticsearch/)) database to store traces.
+The tracing service is provided via the OpenTelemetry Collector, Jaeger Query UI and a [Cassandra database](https://cassandra.apache.org/_/index.html), all running in Docker. Docker also spins up a Cassandra database for storing traces.
 
 ### SQLite Database
 
@@ -131,7 +140,7 @@ The repo is just intended as a reference to speed up creating am Axum-based Grap
 
 ## What this is not
 
-- A production ready app
+- A production-ready app
 - Guide to using Axum, async-graphql or SQLx that covers every feature.
   - To learn more about async-graphql, see:
     - the [async-graphql docs](https://docs.rs/async-graphql/latest/async_graphql/);
@@ -144,7 +153,7 @@ The repo is just intended as a reference to speed up creating am Axum-based Grap
     - [SQLx docs](https://docs.rs/sqlx/latest/sqlx/);
     - [SQLx examples](https://github.com/launchbadge/sqlx/tree/main/examples); and
     - [Rust SQLx basics with SQLite: super easy how-to](https://tms-dev-blog.com/rust-sqlx-basics-with-sqlite/).
-  - For a general introduction to building an web-based API in Rust, [Zero to Production in Rust](https://www.zero2prod.com/index.html) is marvellous.
+  - For a general introduction to building a web-based API in Rust, [Zero to Production in Rust](https://www.zero2prod.com/index.html) is marvellous.
 
 ## ☎️ Issues
 
