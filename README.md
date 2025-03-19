@@ -31,6 +31,8 @@ get spun up via [`docker-compose`](./docker-compose.yml). Additionally, the
 docker-compose configuration initialises a Grafana session (collecting all
 previously mentioned observability components into a single interface).
 
+<img src="./images/architecture.png" alt="App architecture shows the App at the centre, with connections to the Graph Q L Playground, Graph Q L A P I and S Q Lite Database.  There is a connection pointing downwards from the App, which connects to the otel Collector.  The otel Collector has edges leaving it, point to Prometheus, Jaeger Collector and Loki.  The last three all have connections that terminate in the Grafana node." />
+
 ## Spinning up the app
 
 <img src="./images/usage.gif" alt="Terminal animation shows the user entering the following command: cargo run. Then the code compiles and server starts.  Status messages inform that Metrics service is listening on 127.0.0.1:8001, Migrations were run successfully, and Main app service is listening on 127.0.0.1:8000" />
