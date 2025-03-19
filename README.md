@@ -12,14 +12,18 @@
 
 [![codecov](https://codecov.io/gh/rodneylab/axum-graphql/branch/main/graph/badge.svg?token=V9UQLFTRCJ)](https://codecov.io/gh/rodneylab/axum-graphql)
 
-**Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**:with
+**Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**
 
-APIs are minimal and represent a blog site back-end, with GraphQL queries to create and delete draft posts, as well as, publish them.
+APIs are minimal and represent a blog site back-end, with GraphQL queries to
+create and delete draft posts, as well as, publish them.
 
-The app is based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](https://oliverjumpertz.com/blog/how-to-build-a-powerful-graphql-api-with-rust/), updated to use Axum 0.8. It also has more extensive observability, implemented using OpenTelemetry. Data are pushed from the app to an OpenTelemetry collector, which in turn:
+The app is based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](https://oliverjumpertz.com/blog/how-to-build-a-powerful-graphql-api-with-rust/), updated to use Axum 0.8. It also
+has more extensive observability, implemented using OpenTelemetry. Data are
+pushed from the app to an OpenTelemetry collector, which in turn:
 
 - has a Prometheus metrics endpoint;
-- pushes traces to a Jaeger collector, which exposes a Jaeger Query UI endpoint; and
+- pushes traces to a Jaeger collector, which exposes a Jaeger Query UI endpoint;
+  and
 - exports logs to a Loki endpoint.
 
 OpenTelemetry collector, Prometheus, Jaeger Collector, Jaeger Query and Loki all
@@ -39,11 +43,14 @@ previously mentioned observability components into a single interface).
 docker compose up -d
 ```
 
-3. Start the app with `cargo run`. The app will create the SQLite database file and run database migrations in the `migrations` directory.
+3. Start the app with `cargo run`. The app will create the SQLite database file
+   and run database migrations in the `migrations` directory.
 
-4. Open a browser window at `http://localhost:8000` to bring up the GraphQL Playground and run some queries.
+4. Open a browser window at `http://localhost:8000` to bring up the GraphQL
+   Playground and run some queries.
 
-5. The observability services might take a few moments to spin up, and in this case you will see Terminal output:
+5. The observability services might take a few moments to spin up, and in this
+   case you will see Terminal output:
 
 ```shell
 OpenTelemetry trace error occurred. Exporter otlp encountered the following error(s): the grpc server returns error (The service is currently unavailable): , detailed error message: tcp connect error: Connection refused (os error 61)
@@ -54,8 +61,8 @@ This should be temporary.
 ### SQLite Database
 
 The project database migrations create an SQLite database with a Post table,
-which has `id`, `title`, `body` and `published` fields. You can run GraphQL queries to
-create, read, update and delete from this table.
+which has `id`, `title`, `body` and `published` fields. You can run GraphQL
+queries to create, read, update and delete from this table.
 
 <img src="./images/axum-graphql-sqlite-db-post-table.png" alt="Diagram representing database table.  The heading reads `Post`.  Below, the table columns, with associated type is listed: id (integer), title (text), body (text) and published (boolean).  A key icon appears within in the id column data, indicating id is a database primary key." />
 
@@ -128,15 +135,20 @@ Grafana: http://localhost:3000/
 
 ### tracing
 
-The tracing service is provided via the OpenTelemetry Collector, Jaeger Query UI and a [Cassandra database](https://cassandra.apache.org/_/index.html), all running in Docker. Docker also spins up a Cassandra database for storing traces.
+The tracing service is provided via the OpenTelemetry Collector, Jaeger Query UI
+and a [Cassandra database](https://cassandra.apache.org/_/index.html), all
+running in Docker. Docker also spins up a Cassandra database for storing traces.
 
 ### SQLite Database
 
-The API uses an SQLite single-file database for simplicity, at [`sqlite.db`](./sqlite.db). This is automatically created (if it does not yet exist) when the app spins up.
+The API uses an SQLite single-file database for simplicity, at
+[`sqlite.db`](./sqlite.db). This is automatically created (if it does not yet
+exist) when the app spins up.
 
 ## Why did I create this?
 
-The repo is just intended as a reference to speed up creating am Axum-based GraphQL API with observability features.
+The repo is just intended as a reference to speed up creating am Axum-based
+GraphQL API with observability features.
 
 ## What this is not
 
@@ -157,4 +169,5 @@ The repo is just intended as a reference to speed up creating am Axum-based Grap
 
 ## ☎️ Issues
 
-Feel free to jump into the [Rodney Lab matrix chat room](https://matrix.to/#/%23rodney:matrix.org).
+Feel free to jump into the
+[Rodney Lab matrix chat room](https://matrix.to/#/%23rodney:matrix.org).
