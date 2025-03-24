@@ -34,7 +34,7 @@ name = "axum-graphql"
 
 [dependencies]
 anyhow = "1.0.97"
-async-graphql = "7.0.15"
+async-graphql = "7.0.16"
 async-graphql-axum = "7.0.15"
 axum = { version = "0.8.1", features = ["macros"] }
 dotenvy = "0.15.7"
