@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.121.0@sha256:789689988e379c58ac12b07718dbcf4b23c2214bd804173c1c77af346d381c15
+    image: otel/opentelemetry-collector-contrib:0.122.1@sha256:0076e6c250bef16968e29e8f94177b87b5a851c79ce14b270e657f5f655b9e04
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.3@sha256:70b40a2025d450f7865c5ec6f1ebea13108166f81fe41462069690cb4d9690f2
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:1.62.0@sha256:8836a0806c4863eea60df00c835f1514955ec134d71d0be8a9e49ee53c7f7431
+    image: jaegertracing/jaeger-cassandra-schema:1.67.0@sha256:6dcb7a96364fbca5c73725293163395c774e3c04dae71ebfa88ff845272dd37f
     depends_on:
       - cassandra
   jaeger-query:
