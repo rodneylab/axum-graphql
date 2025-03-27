@@ -41,7 +41,7 @@ dotenvy = "0.15.7"
 opentelemetry = "0.29.0"
 opentelemetry-appender-tracing = "0.29.1"
 opentelemetry-otlp = { version = "0.29.0", features = ["grpc-tonic"] }
-opentelemetry-semantic-conventions = "0.29.0"
+# opentelemetry-semantic-conventions = "0.29.0"
 opentelemetry_sdk = { version = "0.29.0", features = ["rt-tokio"] }
 serde = { version = "1.0.219", features = ["derive"] }
 sqlx = { version = "0.8.3", features = ["runtime-tokio-rustls", "sqlite"] }
