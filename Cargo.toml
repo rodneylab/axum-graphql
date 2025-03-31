@@ -36,7 +36,7 @@ name = "axum-graphql"
 anyhow = "1.0.97"
 async-graphql = "7.0.16"
 async-graphql-axum = "7.0.16"
-axum = { version = "0.8.1", features = ["macros"] }
+axum = { version = "0.8.3", features = ["macros"] }
 dotenvy = "0.15.7"
 opentelemetry = "0.29.0"
 opentelemetry-appender-tracing = "0.29.1"
