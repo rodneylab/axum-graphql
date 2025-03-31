@@ -1,13 +1,13 @@
 use axum::{
-    BoxError, Extension, Router, error_handling::HandleErrorLayer, http::StatusCode, middleware,
-    routing::get,
+    error_handling::HandleErrorLayer, http::StatusCode, middleware, routing::get, BoxError,
+    Extension, Router,
 };
-use tower::{ServiceBuilder, timeout::TimeoutLayer};
+use tower::{timeout::TimeoutLayer, ServiceBuilder};
 use tower_http::{compression::CompressionLayer, services::ServeDir};
 
 use crate::{
     model::ServiceSchema,
-    observability::metrics::{AppMetricsState, track as track_metrics},
+    observability::metrics::{self, AppMetricsState},
     routes::{graphql_handler, graphql_playground, health},
 };
 
@@ -34,7 +34,10 @@ pub(crate) fn init_router(schema: ServiceSchema) -> Router {
                     StatusCode::REQUEST_TIMEOUT
                 }))
                 .layer(TimeoutLayer::new(std::time::Duration::from_secs(15)))
-                .layer(middleware::from_fn_with_state(state.clone(), track_metrics)),
+                .layer(middleware::from_fn_with_state(
+                    state.clone(),
+                    metrics::track,
+                )),
         )
         .with_state(state.clone())
 }
