@@ -1,8 +1,8 @@
 use axum::{
-    error_handling::HandleErrorLayer, http::StatusCode, middleware, routing::get, BoxError,
-    Extension, Router,
+    BoxError, Extension, Router, error_handling::HandleErrorLayer, http::StatusCode, middleware,
+    routing::get,
 };
-use tower::{timeout::TimeoutLayer, ServiceBuilder};
+use tower::{ServiceBuilder, timeout::TimeoutLayer};
 use tower_http::{compression::CompressionLayer, services::ServeDir};
 
 use crate::{
