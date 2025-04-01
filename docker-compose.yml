@@ -66,7 +66,7 @@ services:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:11.5.2@sha256:8b37a2f028f164ce7b9889e1765b9d6ee23fec80f871d156fbf436d6198d32b7
+    image: grafana/grafana:11.6.0@sha256:62d2b9d20a19714ebfe48d1bb405086081bc602aa053e28cf6d73c7537640dfb
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.8.2@sha256:1a40a176d7a358e3b59ba0edf3a6d2aa6e4df72cf6a40b97c3d7b0e9a0a0c412
+    image: ghcr.io/pyrra-dev/pyrra:v0.8.2@sha256:7e58eea5025d42e9e69db26b8c5a24fdc3e9a22c65085300784b7c60311ff6d1
     user: root
     container_name: pyrra_filesystem
     restart: always
