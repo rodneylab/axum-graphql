@@ -1,9 +1,10 @@
-/target
-.env
-rusty-tags.vi
-video.tape
 *.profraw
-sqlite.db*
-/assets
 .DS_Store
 .cache
+.env
+.lycheecache
+/assets
+/target
+rusty-tags.vi
+sqlite.db*
+video.tape

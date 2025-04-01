@@ -24,11 +24,15 @@ coverage:
 # generate docs for a crate and copy link to clipboard
 doc crate:
     cargo doc -p {{ crate }}
-    @echo "`pwd`/target/doc/{{ crate }}/index.html" | pbcopy
+    @echo "`pwd`/target/doc/`echo \"{{ crate }}\" | tr - _`/index.html" | pbcopy
 
 # review (accept/reject/...) insta snapshots
 insta-snapshot-review:
     cargo insta review
+
+# check links are valid
+linkcheck:
+    lychee --cache --max-cache-age 1d --exclude-path "deny.toml" . "**/*.toml" "**/*.rs" "**/*.yml"
 
 # copy URL for Rust std docs to clipboard
 std:
