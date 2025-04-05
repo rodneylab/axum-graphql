@@ -127,7 +127,7 @@ query DraftsQuery {
 
 GraphQL Playground: http://localhost:8000/
 
-Metrics raw output: http://localhost:8001/metrics
+Metrics raw output: http://localhost:8889/metrics
 
 Jaeger Query UI: http://localhost:16686/search
 

@@ -11,7 +11,7 @@ http://jaeger-query:16686/
 http://localhost/
 http://localhost:16686/search
 http://localhost:8000/
-http://localhost:8001/metrics
+http://localhost:8889/metrics
 http://localhost:9090/
 http://localhost:9093/
 http://loki:3100/
