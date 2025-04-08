@@ -1,11 +1,6 @@
 use async_graphql::http::{GraphQLPlaygroundConfig, playground_source};
 use async_graphql_axum::{GraphQLRequest, GraphQLResponse};
-use axum::{
-    Json,
-    extract::Extension,
-    http::StatusCode,
-    response::{Html, IntoResponse},
-};
+use axum::{Json, extract::Extension, http::StatusCode, response::Html};
 use opentelemetry::trace::TraceContextExt;
 use serde::Serialize;
 use tracing::{Instrument, Level, span};
@@ -14,17 +9,17 @@ use tracing_opentelemetry::OpenTelemetrySpanExt;
 use crate::model::ServiceSchema;
 
 #[derive(Serialize)]
-struct Health {
+pub(crate) struct Health {
     healthy: bool,
 }
 
-pub(crate) async fn health() -> impl IntoResponse {
+pub(crate) async fn health() -> (StatusCode, Json<Health>) {
     let health = Health { healthy: true };
 
     (StatusCode::OK, Json(health))
 }
 
-pub(crate) async fn graphql_playground() -> impl IntoResponse {
+pub(crate) async fn graphql_playground() -> Html<String> {
     Html(
         // serve GraphQL Playground CDN assets locally
         playground_source(GraphQLPlaygroundConfig::new("/").subscription_endpoint("/ws"))
