@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.122.1@sha256:0076e6c250bef16968e29e8f94177b87b5a851c79ce14b270e657f5f655b9e04
+    image: otel/opentelemetry-collector-contrib:0.123.0@sha256:e39311df1f3d941923c00da79ac7ba6269124a870ee87e3c3ad24d60f8aee4d2
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -17,7 +17,7 @@ services:
       - jaeger-collector
       - loki
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.67.0@sha256:7c94da406b6e186c756e257bca9954fca3c8be1b5e0b05f377f4dacdf0bcce06
+    image: jaegertracing/jaeger-collector:1.68.0@sha256:cfe74cf4c8e67809ff802bfbe7c394dde8807f415cadbc76fd31fba8b9c57d35
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -35,11 +35,11 @@ services:
   cassandra:
     image: cassandra:5.0.3@sha256:70b40a2025d450f7865c5ec6f1ebea13108166f81fe41462069690cb4d9690f2
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:1.67.0@sha256:6dcb7a96364fbca5c73725293163395c774e3c04dae71ebfa88ff845272dd37f
+    image: jaegertracing/jaeger-cassandra-schema:1.68.0@sha256:cac405715726ca5f540eea97c0f7d0085b64ff73f45f01144806283627a4f863
     depends_on:
       - cassandra
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.62.0@sha256:e3dd18391fc04065d8edf5efbbefe33f3e865b7f6175e81a2ee284085a73f63d
+    image: jaegertracing/jaeger-query:1.68.0@sha256:6b71f6f6b1c045e5eb9c24203c8b0782796f82c15ac5cbf34307e436db380fa8
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -59,7 +59,7 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.4.2@sha256:58a6c186ce78ba04d58bfe2a927eff296ba733a430df09645d56cdc158f3ba08
+    image: grafana/loki:3.4.3@sha256:5fe9fa99e9a747297cdf0239a5b25d192d8f668bd6505b09beef4dffcab5aac2
     ports:
       - "3100:3100"
     volumes:
