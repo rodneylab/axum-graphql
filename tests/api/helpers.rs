@@ -1,4 +1,5 @@
-use once_cell::sync::Lazy;
+use std::sync::LazyLock;
+
 use sqlx::{SqlitePool, sqlite::SqlitePoolOptions};
 
 use axum_graphql::{
@@ -7,7 +8,7 @@ use axum_graphql::{
     startup::{Application, ApplicationRouter},
 };
 
-static TRACING: Lazy<Option<OpenTelemetryProviders>> = Lazy::new(initialise_observability);
+static TRACING: LazyLock<Option<OpenTelemetryProviders>> = LazyLock::new(initialise_observability);
 
 pub struct TestApp {
     pub port: u16,
@@ -18,7 +19,7 @@ impl TestApp {
         unsafe {
             std::env::set_var("OPENTELEMETRY_ENABLED", "true");
         }
-        let tracer_provider = Lazy::force(&TRACING);
+        let tracer_provider = LazyLock::force(&TRACING);
         let database_url = "sqlite://:memory:";
 
         let app = Application::build(database_url, ("127.0.0.1", 0))

@@ -2,17 +2,17 @@ use axum::{
     body::Body,
     http::{Method, Request, StatusCode, header},
 };
-use axum_graphql::startup::ApplicationRouter;
 use http_body_util::BodyExt;
 use serde_json::{Value, json};
 use tower::util::ServiceExt;
 
 use crate::helpers::TestApp;
+use axum_graphql::startup::ApplicationRouter;
 
 #[tokio::test]
 async fn graphql_endpoint_returns_200_ok() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
 
     // act
     let response = router
@@ -27,7 +27,7 @@ async fn graphql_endpoint_returns_200_ok() {
 #[tokio::test]
 async fn graphql_endpoint_responds_to_invalid_query() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
     let json_request_body: Value = json!(
     {"operationName":"HelloQuery","variables":{},"query":"query HelloQuery { hello "
         });
@@ -66,7 +66,7 @@ async fn graphql_endpoint_responds_to_invalid_query() {
 #[tokio::test]
 async fn health_check_returns_expected_json_response_with_200_ok() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
 
     // act
     let response = router

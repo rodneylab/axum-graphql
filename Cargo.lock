@@ -333,7 +333,6 @@ dependencies = [
  "http-body-util",
  "insta",
  "mime",
- "once_cell",
  "opentelemetry",
  "opentelemetry-appender-tracing",
  "opentelemetry-otlp",
