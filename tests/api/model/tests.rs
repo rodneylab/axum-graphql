@@ -94,7 +94,7 @@ mod helpers {
 
 async fn snapshot_graqphql_query_async<P: AsRef<Path>>(path: P) {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
     let json_request_body: Value = serde_json::from_slice(
         &std::fs::read(&path).expect("file should exist and have read permissions set"),
     )
@@ -139,7 +139,7 @@ async fn snapshot_graphql_queries() {
 #[tokio::test]
 async fn graphql_endpoint_responds_to_hello_query() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
     let json_request_body: Value = json!({
         "operationName":"HelloQuery",
         "variables":{},
@@ -176,7 +176,7 @@ async fn graphql_endpoint_responds_to_hello_query() {
 #[tokio::test]
 async fn graphql_endpoint_responds_to_drafts_query() {
     // arrange
-    let ApplicationRouter { mut router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { mut router } = TestApp::spawn_routers().await;
     let drafts_json_request_body: Value = json!({
         "operationName":"DraftsQuery",
         "variables":{},
@@ -280,7 +280,7 @@ async fn graphql_endpoint_responds_to_drafts_query() {
 #[tokio::test]
 async fn posts_return_empty_array_when_no_posts_exist() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
     let posts_json_request_body: Value = json!({
         "operationName":"PostsQuery",
         "variables":{},
@@ -317,7 +317,7 @@ async fn posts_return_empty_array_when_no_posts_exist() {
 #[tokio::test]
 async fn posts_returns_existing_posts() {
     // arrange
-    let ApplicationRouter { mut router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { mut router } = TestApp::spawn_routers().await;
     let id_1 = helpers::create_draft(&mut router, "First Post Title", "First post body.").await;
     let _id_2 = helpers::create_draft(&mut router, "Second Post Title", "Second post body.").await;
     let id_3 = helpers::create_draft(&mut router, "Third Post Title", "Third post body.").await;
@@ -363,7 +363,7 @@ async fn posts_returns_existing_posts() {
 #[tokio::test]
 async fn publish_returns_user_error_for_invalid_id() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
     let id = 9_999;
     let publish_draft_json_request_body: Value = json!({
         "operationName":"PublishMutation",
@@ -425,7 +425,7 @@ async fn publish_returns_user_error_for_invalid_id() {
 #[tokio::test]
 async fn publish_returns_user_expected_result_for_valid_input() {
     // arrange
-    let ApplicationRouter { mut router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { mut router } = TestApp::spawn_routers().await;
     let _id_1 = helpers::create_draft(&mut router, "First Post Title", "First post body.").await;
     let id_2 = helpers::create_draft(&mut router, "Second Post Title", "Second post body.").await;
     let _id_3 = helpers::create_draft(&mut router, "Third Post Title", "Third post body.").await;
@@ -488,7 +488,7 @@ async fn publish_returns_user_expected_result_for_valid_input() {
 #[tokio::test]
 async fn delete_draft_returns_user_error_for_invalid_id() {
     // arrange
-    let ApplicationRouter { router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { router } = TestApp::spawn_routers().await;
     let id = 9_999;
     let delete_draft_json_request_body: Value = json!({
         "operationName":"DeleteDraftMutation",
@@ -550,7 +550,7 @@ async fn delete_draft_returns_user_error_for_invalid_id() {
 #[tokio::test]
 async fn delete_draft_returns_user_expected_result_for_valid_input() {
     // arrange
-    let ApplicationRouter { mut router, .. } = TestApp::spawn_routers().await;
+    let ApplicationRouter { mut router } = TestApp::spawn_routers().await;
     let _id_1 = helpers::create_draft(&mut router, "First Post Title", "First post body.").await;
     let id_2 = helpers::create_draft(&mut router, "Second Post Title", "Second post body.").await;
     let _id_3 = helpers::create_draft(&mut router, "Third Post Title", "Third post body.").await;

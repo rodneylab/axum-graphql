@@ -13,7 +13,7 @@ env:
   RUST_TOOLCHAIN: 1.86
   RUSTFLAGS: "-Dwarnings -Cinstrument-coverage"
   LLVM_PROFILE_FILE: "axum_graphql-%p-%m.profraw"
-  SQLX_VERSION: 0.8.4
+  SQLX_VERSION: 0.8.5
   SQLX_FEATURES: "rustls,sqlite"
 jobs:
   test:
