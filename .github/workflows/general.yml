@@ -110,7 +110,7 @@ jobs:
       - name: Install Linux Dependencies
         run: sudo apt-get update
       - name: Install beta
-        uses: dtolnay/rust-toolchain@fcf085fcb4b4b8f63f96906cd713eb52181b5ea4 # stable
+        uses: dtolnay/rust-toolchain@4305c38b25d97ef35a8ad1f985ccf2d2242004f2 # stable
         with:
           toolchain: beta
       - name: cargo beta check
