@@ -3,7 +3,7 @@ use sqlx::{
     migrate::{MigrateDatabase, Migrator},
 };
 
-/// .
+/// Create a new `SQLite` database if one does not already exist.
 ///
 /// # Panics
 ///
@@ -20,7 +20,7 @@ pub async fn create(db_url: &str) {
     }
 }
 
-/// .
+/// Run `SQLite` database migrations.
 ///
 /// # Panics
 ///
@@ -37,7 +37,7 @@ pub async fn run_migrations(db_pool: &SqlitePool) {
 }
 
 /// Returns vector of ``SQLite`` database tables.  Created for use in snapshot unit testing.
-/// Created outside of test module, so `sqlx prepare` include this query.
+/// Created outside of test module, so `sqlx prepare` includes this query.
 #[allow(dead_code)]
 async fn get_tables(db_pool: &SqlitePool) -> Vec<String> {
     let query_outcome = sqlx::query_unchecked!(

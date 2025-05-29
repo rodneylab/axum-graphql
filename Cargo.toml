@@ -4,8 +4,8 @@ version = "0.1.0"
 edition = "2024"
 license = "BSD-3-Clause"
 repository = "https://github.com/rodneylab/axum-graphql"
-# rust edition 2024 msrv is 1.85.0
-rust-version = "1.85.0"
+# async-graphql 7.0.17 msrv is 1.86.0
+rust-version = "1.86.0"
 description = "Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx."
 
 [lints.clippy]
@@ -45,8 +45,8 @@ name = "axum-graphql"
 
 [dependencies]
 anyhow = "1.0.98"
-async-graphql = "7.0.16"
-async-graphql-axum = "7.0.16"
+async-graphql = "7.0.17"
+async-graphql-axum = "7.0.17"
 axum = { version = "0.8.4", features = ["macros"] }
 dotenvy = "0.15.7"
 opentelemetry = "0.29.1"
@@ -54,8 +54,8 @@ opentelemetry-appender-tracing = "0.29.1"
 opentelemetry-otlp = { version = "0.29.0", features = ["grpc-tonic"] }
 opentelemetry_sdk = { version = "0.29.0", features = ["rt-tokio"] }
 serde = { version = "1.0.219", features = ["derive"] }
-sqlx = { version = "0.8.5", features = ["runtime-tokio-rustls", "sqlite"] }
-tokio = { version = "1.45.0", features = ["full"] }
+sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "sqlite"] }
+tokio = { version = "1.45.1", features = ["full"] }
 tower = { version = "0.5.2", features = ['timeout', 'util'] }
 tower-http = { version = "0.6.4", features = ["compression-br", "compression-gzip", "fs", "timeout"] }
 tracing = "0.1.41"

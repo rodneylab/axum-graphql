@@ -10,6 +10,7 @@ use post::{
 
 pub(crate) type ServiceSchema = Schema<QueryRoot, MutationRoot, EmptySubscription>;
 
+/// Create and return an instance of [`ServiceSchema`], representing the entire GraphQL schema.
 pub(crate) fn get_schema(db_pool: SqlitePool) -> ServiceSchema {
     Schema::build(QueryRoot, MutationRoot, EmptySubscription)
         .data(db_pool)
@@ -20,6 +21,7 @@ pub(crate) fn get_schema(db_pool: SqlitePool) -> ServiceSchema {
         .finish()
 }
 
+/// GraphQL API query type
 pub(crate) struct QueryRoot;
 
 #[Object]
@@ -45,6 +47,7 @@ impl QueryRoot {
     }
 }
 
+/// GraphQL API mutation type
 pub(crate) struct MutationRoot;
 
 #[Object]
