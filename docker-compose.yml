@@ -59,14 +59,14 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.5.0@sha256:4c431d2e6b9b38718694b31c5d56be7c80dc69c513215fde1aeb5b02cd4e2665
+    image: grafana/loki:3.5.1@sha256:a74594532eec4cc313401beedc4dd2708c43674c032084b1aeb87c14a5be1745
     ports:
       - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:12.0.0@sha256:263cbefd5d9b179893c47c415daab4da5c1f3d6770154741eca4f45c81119884
+    image: grafana/grafana:12.0.1@sha256:06dc8d60e184705e5dc00e051a6d92342a44010d7d5e538d0a36339e85abb9b7
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
