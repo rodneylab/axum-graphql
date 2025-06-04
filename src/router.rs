@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{
     BoxError, Extension, Router, error_handling::HandleErrorLayer, http::StatusCode, middleware,
     routing::get,
@@ -20,6 +22,7 @@ pub(crate) fn init_router(schema: ServiceSchema) -> Router {
     let state = AppState {
         metrics: AppMetricsState::default(),
     };
+    let shared_state = Arc::new(state);
 
     Router::new()
         .route("/", get(graphql_playground).post(graphql_handler))
@@ -35,9 +38,9 @@ pub(crate) fn init_router(schema: ServiceSchema) -> Router {
                 }))
                 .layer(TimeoutLayer::new(std::time::Duration::from_secs(15)))
                 .layer(middleware::from_fn_with_state(
-                    state.clone(),
+                    Arc::clone(&shared_state),
                     metrics::track,
                 )),
         )
-        .with_state(state.clone())
+        .with_state(shared_state)
 }
