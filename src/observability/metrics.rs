@@ -1,4 +1,4 @@
-use std::time::Instant;
+use std::{sync::Arc, time::Instant};
 
 use crate::router::AppState;
 
@@ -50,11 +50,7 @@ impl Default for AppMetricsState {
 
 #[debug_middleware]
 pub async fn track(
-    State(AppState {
-        metrics: AppMetricsState {
-            counter, histogram, ..
-        },
-    }): State<AppState>,
+    State(state): State<Arc<AppState>>,
     req: Request,
     next: Next,
 ) -> impl IntoResponse {
@@ -76,8 +72,9 @@ pub async fn track(
         KeyValue::new("path", path),
         KeyValue::new("status", status),
     ];
-    counter.add(1, &attributes);
-    histogram.record(latency, &attributes);
+    let state = Arc::clone(&state);
+    state.metrics.counter.add(1, &attributes);
+    state.metrics.histogram.record(latency, &attributes);
 
     response
 }
