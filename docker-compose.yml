@@ -17,7 +17,7 @@ services:
       - jaeger-collector
       - loki
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.69.0@sha256:9064151ed3cb7bcd01339d11cf9e28489b8a65a267cf90d9ce914ff173a5537e
+    image: jaegertracing/jaeger-collector:1.70.0@sha256:56cf9a0ecfd838fa65a2e4c42194ca79328722abaf90787543de38bb4c93f65c
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
