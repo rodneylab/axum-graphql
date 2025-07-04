@@ -74,6 +74,12 @@ pub enum PublishResponse {
 }
 
 /// Return a list of up to 100 draft posts
+///
+/// # Errors
+///
+/// Errors if:
+///  - unable to connect to database; or
+///  - if SQL query fails.
 #[tracing::instrument(name = "Drafts query", skip(db_pool))]
 pub async fn drafts_query(db_pool: &SqlitePool) -> Result<Vec<Post>, anyhow::Error> {
     let limit = 100;
@@ -101,6 +107,12 @@ LIMIT
 }
 
 /// Returns a list of up to 100 published posts
+///
+/// # Errors
+///
+/// Errors if:
+///  - unable to connect to database; or
+///  - if SQL query fails.
 #[tracing::instrument(name = "Posts query", skip(db_pool))]
 pub async fn posts_query(db_pool: &SqlitePool) -> Result<Vec<Post>, anyhow::Error> {
     let limit = 100;
@@ -129,6 +141,12 @@ LIMIT
 
 /// Creates a new draft with `title` and `body`
 /// Successful creation returns the created post
+///
+/// # Errors
+///
+/// Errors if:
+///  - unable to connect to database; or
+///  - if SQL query fails.
 #[tracing::instrument(name = "Create draft mutation", skip(db_pool))]
 pub async fn create_draft_mutation(
     db_pool: &SqlitePool,
@@ -151,20 +169,25 @@ RETURNING
         title,
         body
     )
-    .fetch_optional(db_pool)
+    .fetch_one(db_pool)
     .await
-    .map_err(|e| {
-        tracing::error!("Failed to execute query: {e:?}");
-        e
+    .inspect_err(|err| {
+        tracing::error!("Failed to execute query: {err:?}");
     })
     .context("run create draft mutation for post")?;
 
-    Ok(inserted_row.expect("No new data inserted"))
+    Ok(inserted_row)
 }
 
 /// Deletes draft matching `id`
 /// Returns `DeleteDraftResponse` with error, if the query yields no post matching `id`
 /// Successful deletion returns a `DeleteDraftResponse` with the deleted post
+///
+/// # Errors
+///
+/// Errors if:
+///  - unable to connect to database; or
+///  - if SQL query fails.
 #[tracing::instrument(name = "Delete draft mutation", skip(db_pool))]
 pub async fn delete_draft_mutation(
     db_pool: &SqlitePool,
@@ -214,6 +237,12 @@ RETURNING
 /// Publishes draft matching `id`
 /// Returns `PublishResponse` with error, if the query yields no post matching `id`
 /// Successful publishing returns a `PublishResponse` with the updated post
+///
+/// # Errors
+///
+/// Errors if:
+///  - unable to connect to database; or
+///  - if SQL query fails.
 #[tracing::instrument(name = "Publish mutation", skip(db_pool))]
 pub async fn publish_mutation(
     db_pool: &SqlitePool,
@@ -238,9 +267,8 @@ RETURNING
     )
     .fetch_optional(db_pool)
     .await
-    .map_err(|e| {
-        tracing::error!("Failed to execute query: {e:?}");
-        e
+    .inspect_err(|err| {
+        tracing::error!("Failed to execute query: {err:?}");
     })?;
 
     match updated_row {
