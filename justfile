@@ -1,4 +1,7 @@
 # find comments in Rust source
+default:
+    just --list
+
 comments:
     rg --pcre2 -t rust '(^|\s+)(\/\/|\/\*)\s+(?!(act|arrange|assert))' .
 
@@ -24,7 +27,8 @@ coverage:
 # generate docs for a crate and copy link to clipboard
 doc crate:
     cargo doc -p {{ crate }}
-    @echo "`pwd`/target/doc/`echo \"{{ crate }}\" | tr - _`/index.html" | pbcopy
+    @echo "`pwd`/target/doc/`echo \"{{ crate }}\" | tr - _ \
+        | sed 's/^rust_//' `/index.html" | pbcopy
 
 # review (accept/reject/...) insta snapshots
 insta-snapshot-review:
