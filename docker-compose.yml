@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.131.1@sha256:c06aa6d7833e9a2b81c6c394d67e40ae9864edec8dca8a8e8552df1316c96d9b
+    image: otel/opentelemetry-collector-contrib:0.135.0@sha256:89107a3a8f4636a396927edf7025bb9614b8da2d92f4cc3f43109e8d115736e2
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -17,7 +17,7 @@ services:
       - jaeger-collector
       - loki
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.71.0@sha256:ba8a60dd1718fa80b0d18f4062135d94356f794044de755794eb7e610661d248
+    image: jaegertracing/jaeger-collector:1.73.0@sha256:4d6a75c703070db9080fe082524be0bb9d2916b65467314539892a9fdea69457
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -33,13 +33,13 @@ services:
     depends_on:
       - cassandra-schema
   cassandra:
-    image: cassandra:5.0.4@sha256:ee5be67d740b5a427881effcfb672b6c986122ec139eada751f82bca247d6904
+    image: cassandra:5.0.5@sha256:9baaa5f5eea4ebb12d27f444fb8232ce3de93f49b8452cdaf0b24a56c0c78caf
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:1.71.0@sha256:ac66822f22cb1561ce9e3623ae89dce93d6d8fa897d3cf6579e0a988a8a2923b
+    image: jaegertracing/jaeger-cassandra-schema:1.72.0@sha256:d85062ae7d3be588bf02dc0af45c892743f53688c70fb1e12e87f60e56bc0ef9
     depends_on:
       - cassandra
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.71.0@sha256:3722ba68d482400585e06f564c5b68f99f708651d1de3698d64ed6c865ce06de
+    image: jaegertracing/jaeger-query:1.73.0@sha256:0579f07eb43332bb4d00c7021b8551e629d9a24ddf8788d65a739087c6c95ce7
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -50,7 +50,7 @@ services:
     depends_on:
       - cassandra-schema
   prometheus:
-    image: prom/prometheus:v3.5.0@sha256:63805ebb8d2b3920190daf1cb14a60871b16fd38bed42b857a3182bc621f4996
+    image: prom/prometheus:v3.6.0@sha256:76947e7ef22f8a698fc638f706685909be425dbe09bd7a2cd7aca849f79b5f64
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
