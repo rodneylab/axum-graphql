@@ -22,12 +22,12 @@ jobs:
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get install sqlite3 -y
       - name: Cache sqlx-cli
-        uses: actions/cache@5a3ec84eff668545956fd18022155c47e93e2684 # v4.2.3
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
         id: cache-sqlx
         with:
           path: ~/.cargo/bin/sqlx ~/.cargo/bin/cargo-sqlx
           key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
-      - uses: dtolnay/rust-toolchain@4305c38b25d97ef35a8ad1f985ccf2d2242004f2 # stable
+      - uses: dtolnay/rust-toolchain@5d458579430fc14a04a08a1e7d3694f545e91ce6 # stable
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
