@@ -33,7 +33,7 @@ services:
     depends_on:
       - cassandra-schema
   cassandra:
-    image: cassandra:5.0.5@sha256:9baaa5f5eea4ebb12d27f444fb8232ce3de93f49b8452cdaf0b24a56c0c78caf
+    image: cassandra:5.0.6@sha256:1d8cf162daa6292aae28ebd2228dea444a5108f82bf1df085804638a36896e8c
   cassandra-schema:
     image: jaegertracing/jaeger-cassandra-schema:1.74.0@sha256:ceb7d9c2dd8b43a8c2aeaaf1da6b838badb031c8844e8fe99f51134b501bebcd
     depends_on:
@@ -50,7 +50,7 @@ services:
     depends_on:
       - cassandra-schema
   prometheus:
-    image: prom/prometheus:v3.6.0@sha256:76947e7ef22f8a698fc638f706685909be425dbe09bd7a2cd7aca849f79b5f64
+    image: prom/prometheus:v3.7.3@sha256:49214755b6153f90a597adcbff0252cc61069f8ab69ce8411285cd4a560e8038
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
@@ -59,14 +59,14 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.5.7@sha256:0eaee7bf39cc83aaef46914fb58f287d4f4c4be6ec96b86c2ed55719a75e49c8
+    image: grafana/loki:3.5.8@sha256:00981fd9455db8589c3aa6d06744af3138c4b2c32fdec62101e92c7a704b2642
     ports:
       - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:12.2.0@sha256:74144189b38447facf737dfd0f3906e42e0776212bf575dc3334c3609183adf7
+    image: grafana/grafana:12.2.1@sha256:35c41e0fd0295f5d0ee5db7e780cf33506abfaf47686196f825364889dee878b
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning
   pyrra-api:
-    image: ghcr.io/pyrra-dev/pyrra:v0.8.4@sha256:5051c6ca5025bff4d140a2d5a3c8899f7fcc1045137bb96afcace26502285078
+    image: ghcr.io/pyrra-dev/pyrra:v0.9.1@sha256:a3ccfc20ff14c1e3fc128c38cc4edd622e1da39254fa0a49925e5505ecbdf1e1
     container_name: pyrra_api
     restart: always
     command:
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.8.4@sha256:5051c6ca5025bff4d140a2d5a3c8899f7fcc1045137bb96afcace26502285078
+    image: ghcr.io/pyrra-dev/pyrra:v0.9.1@sha256:a3ccfc20ff14c1e3fc128c38cc4edd622e1da39254fa0a49925e5505ecbdf1e1
     user: root
     container_name: pyrra_filesystem
     restart: always
