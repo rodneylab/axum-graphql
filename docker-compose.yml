@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.139.0@sha256:faf125d656fa47cea568b2f3b4494efd2525083bc75c1e96038bc23f05cd68fd
+    image: otel/opentelemetry-collector-contrib:0.140.0@sha256:ffc818ee108d0b934fd14207fd87ff247c9b64f344ed349d0b66c166c18a2312
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -17,7 +17,7 @@ services:
       - jaeger-collector
       - loki
   jaeger-collector:
-    image: jaegertracing/jaeger-collector:1.74.0@sha256:d88975c844d4406b1e66360a3ab7c5910e4907483ee764b669efd8992a70b605
+    image: jaegertracing/jaeger-collector:1.75.0@sha256:9854eac27f8936cf67e5af9ec74c003494c48da75b80a4758fc9465f88990f1f
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -35,11 +35,11 @@ services:
   cassandra:
     image: cassandra:5.0.6@sha256:1d8cf162daa6292aae28ebd2228dea444a5108f82bf1df085804638a36896e8c
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:1.74.0@sha256:ceb7d9c2dd8b43a8c2aeaaf1da6b838badb031c8844e8fe99f51134b501bebcd
+    image: jaegertracing/jaeger-cassandra-schema:1.75.0@sha256:de458da2351c61e2be8a76cca698ddbc251a20d134c1ae19fe055b8bebc97069
     depends_on:
       - cassandra
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.74.0@sha256:5822c36dc9b1f3fa4c66ede5bfaa5c221d49da40f983d48246ae62400c972ef2
+    image: jaegertracing/jaeger-query:1.75.0@sha256:cd8dfbcb6b3ebff15b0a271851cd341257f35bea6e27617148015e62a817b231
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
@@ -66,7 +66,7 @@ services:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:12.2.1@sha256:35c41e0fd0295f5d0ee5db7e780cf33506abfaf47686196f825364889dee878b
+    image: grafana/grafana:12.3.0@sha256:70d9599b186ce287be0d2c5ba9a78acb2e86c1a68c9c41449454d0fc3eeb84e8
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
