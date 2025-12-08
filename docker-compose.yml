@@ -39,7 +39,7 @@ services:
     depends_on:
       - cassandra
   jaeger-query:
-    image: jaegertracing/jaeger-query:1.75.0@sha256:cd8dfbcb6b3ebff15b0a271851cd341257f35bea6e27617148015e62a817b231
+    image: jaegertracing/jaeger-query:1.76.0@sha256:fc9f1552ec570f5bfae055c149bd67d83b936371f1947ff503127bb02204295e
     command:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
