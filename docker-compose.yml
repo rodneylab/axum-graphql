@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.141.0@sha256:b14234c4bc1b7364629af272e564913bb57bdc9736d45b8b6db5ab3417dc75f9
+    image: otel/opentelemetry-collector-contrib:0.142.0@sha256:38c349c3b7a2fd7ea46700cde8fa13d35b699ef2ce245bdf34dae2a413512f76
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -50,7 +50,7 @@ services:
     depends_on:
       - cassandra-schema
   prometheus:
-    image: prom/prometheus:v3.8.0@sha256:d936808bdea528155c0154a922cd42fd75716b8bb7ba302641350f9f3eaeba09
+    image: prom/prometheus:v3.8.1@sha256:2b6f734e372c1b4717008f7d0a0152316aedd4d13ae17ef1e3268dbfaf68041b
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
@@ -59,7 +59,7 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.6.2@sha256:fad94db64eeb0e14544953789c942453df68a860b6f760d867f06c5b31f461ab
+    image: grafana/loki:3.6.3@sha256:cd6e176883a90c21755f0315688668991634143423f75bdedfef41441b0fdc3c
     ports:
       - "3100:3100"
     volumes:
