@@ -95,6 +95,7 @@ allow = [
   "CDLA-Permissive-2.0",
   "ISC",
   "MIT",
+  "OpenSSL",
   "MPL-2.0",
   "Unicode-3.0",
 ]
