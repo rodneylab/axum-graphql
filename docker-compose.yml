@@ -59,7 +59,7 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.6.5@sha256:847c287ada0e12603910589f42038c5cdaaad04e248bd1dc6c6e0920a235f427
+    image: grafana/loki:3.6.6@sha256:434c7effbd66dbf69c2665fe4b2125549ecf7b45039ac28595d4034031cf47ce
     ports:
       - "3100:3100"
     volumes:
