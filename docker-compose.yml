@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.143.1@sha256:f051aff195ad50ed5ad9d95bcdd51d7258200c937def3797cf830366ed62e034
+    image: otel/opentelemetry-collector-contrib:0.145.0@sha256:a7343f01869071ea3f4c5e1e97df1bb1b3c4d5c77247db80e053a80b9df530c4
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.6@sha256:1d8cf162daa6292aae28ebd2228dea444a5108f82bf1df085804638a36896e8c
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:2.14.1@sha256:28661cfe75a570fa05534da62e55184b773fe93e38dd58139f7dc2d8c4d0b9e3
+    image: jaegertracing/jaeger-cassandra-schema:2.15.1@sha256:5a80dbe6d5b0169d6a5ba60bf20cc35f30efb764514475f4db95159263803ee5
     depends_on:
       - cassandra
   jaeger-query:
@@ -59,14 +59,14 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.6.3@sha256:cd6e176883a90c21755f0315688668991634143423f75bdedfef41441b0fdc3c
+    image: grafana/loki:3.6.5@sha256:847c287ada0e12603910589f42038c5cdaaad04e248bd1dc6c6e0920a235f427
     ports:
       - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:12.3.1@sha256:2175aaa91c96733d86d31cf270d5310b278654b03f5718c59de12a865380a31f
+    image: grafana/grafana:12.3.2@sha256:ba93c9d192e58b23e064c7f501d453426ccf4a85065bf25b705ab1e98602bfb1
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning
   pyrra-api:
-    image: ghcr.io/pyrra-dev/pyrra:v0.9.2@sha256:cb3c00be24a7df12b580c9a9f8dbf798c582773d2a80b69b05949817ad557e9e
+    image: ghcr.io/pyrra-dev/pyrra:v0.9.3@sha256:1f2e1cbed234421cc0f1931582f6202a5e4317e743f63631f03969b5f4cce396
     container_name: pyrra_api
     restart: always
     command:
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.9.2@sha256:cb3c00be24a7df12b580c9a9f8dbf798c582773d2a80b69b05949817ad557e9e
+    image: ghcr.io/pyrra-dev/pyrra:v0.9.3@sha256:1f2e1cbed234421cc0f1931582f6202a5e4317e743f63631f03969b5f4cce396
     user: root
     container_name: pyrra_filesystem
     restart: always
