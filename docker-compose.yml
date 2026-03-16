@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.6@sha256:1d8cf162daa6292aae28ebd2228dea444a5108f82bf1df085804638a36896e8c
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:2.15.1@sha256:5a80dbe6d5b0169d6a5ba60bf20cc35f30efb764514475f4db95159263803ee5
+    image: jaegertracing/jaeger-cassandra-schema:2.16.0@sha256:c1e64a4a44c93a0d769a80dc30a73232ace2a37b52d4387acd778f24ec45d307
     depends_on:
       - cassandra
   jaeger-query:
@@ -66,7 +66,7 @@ services:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:12.4.0@sha256:b0ae311af06228bcfd4a620504b653db80f5b91e94dc3dc2a5b7dab202bcde20
+    image: grafana/grafana:12.4.1@sha256:e932bd6ed0e026595b08483cd0141e5103e1ab7ff8604839ff899b8dc54cabcb
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
