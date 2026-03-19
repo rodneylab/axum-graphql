@@ -79,7 +79,7 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning
   pyrra-api:
-    image: ghcr.io/pyrra-dev/pyrra:v0.9.3@sha256:1f2e1cbed234421cc0f1931582f6202a5e4317e743f63631f03969b5f4cce396
+    image: ghcr.io/pyrra-dev/pyrra:v0.9.5@sha256:4382ed184a02e3d30bfea94c504e9e6eac333426478b255218dd23fb73e0a5c2
     container_name: pyrra_api
     restart: always
     command:
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.9.3@sha256:1f2e1cbed234421cc0f1931582f6202a5e4317e743f63631f03969b5f4cce396
+    image: ghcr.io/pyrra-dev/pyrra:v0.9.5@sha256:4382ed184a02e3d30bfea94c504e9e6eac333426478b255218dd23fb73e0a5c2
     user: root
     container_name: pyrra_filesystem
     restart: always
