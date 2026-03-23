@@ -22,7 +22,7 @@ axum = { version = "0.8.8", features = ["macros"] }
 dotenvy = "0.15.7"
 opentelemetry = "0.31.0"
 opentelemetry-appender-tracing = "0.31.1"
-opentelemetry-otlp = { version = "0.31.0", features = ["grpc-tonic"] }
+opentelemetry-otlp = { version = "0.31.1", features = ["grpc-tonic"] }
 opentelemetry_sdk = { version = "0.31.0", features = ["rt-tokio"] }
 serde = { version = "1.0.228", features = ["derive"] }
 sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "sqlite"] }
