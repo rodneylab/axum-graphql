@@ -4,8 +4,8 @@
 ^\./sqlite\.db
 ^file:\/\/.*
 ^http://localhost:3000/.*
+^https://assets/.*
 ^https://storage.googleapis.com/integration-artifacts/grafana-lokiexplore-app/.*
-^sqlite:\/\/.*
 http://default-url.com/
 http://jaeger-query:16686/
 http://localhost/
@@ -18,3 +18,4 @@ http://loki:3100/
 http://prometheus:9090/
 http://pyrra-filesystem:9444/
 https://fonts\.googleapis\.com/css
+sqlite://:memory
