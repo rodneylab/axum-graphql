@@ -24,7 +24,7 @@
 
 ## Introduction
 
-**Rust GraphQL demo/test API written in Rust, using Axum for routing, \
+**Rust GraphQL demo/test API written in Rust, using Axum for routing,\
 async-graphql and SQLx.**
 
 For Rust developers building a GraphQL API, considering using Axum and
