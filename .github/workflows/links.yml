@@ -21,5 +21,5 @@ jobs:
       - name: Run lychee
         uses: lycheeverse/lychee-action@8646ba30535128ac92d33dfc9133794bfdd9b411 # v2.8.0
         with:
-          args: "--cache --max-cache-age 1d --exclude-path \"deny.toml\" . \"**/*.toml\" \"**/*.rs\" \"**/*.yml\""
+          args: "--cache --max-cache-age 1d --base-url https://rodneylab.com --root-dir / --exclude-path \"deny.toml\" . \"**/*.toml\" \"**/*.rs\" \"**/*.yml\""
           fail: true
