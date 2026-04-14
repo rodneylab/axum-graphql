@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.7@sha256:1adee7ef220ce93aa1c06ba042ac80d6aca90ee8c3268cc2971120fa6fb64b0a
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:2.16.0@sha256:c1e64a4a44c93a0d769a80dc30a73232ace2a37b52d4387acd778f24ec45d307
+    image: jaegertracing/jaeger-cassandra-schema:2.17.0@sha256:bc5b40b01ded28bc8a2e2eb8f5a7f0c4380e3171564b7d003be70cfbda662cf0
     depends_on:
       - cassandra
   jaeger-query:
@@ -50,7 +50,7 @@ services:
     depends_on:
       - cassandra-schema
   prometheus:
-    image: prom/prometheus:v3.11.0@sha256:dda13e28bf95a5e5ca5b8ed56852006094c1c8e8871d9c9dbeed30aa6e55271f
+    image: prom/prometheus:v3.11.2@sha256:5550dc63da361dc30f6fe02ac0e4dfc736ededfef3c8d12a634db04a67824d78
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
