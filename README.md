@@ -1,20 +1,31 @@
-<img src="./images/rodneylab-github-axum-graphql.png" alt="Rodney Lab Axum Graph Q L Git Hub banner" />
+<img
+  src="./images/rodneylab-github-axum-graphql.png"
+  alt="Rodney Lab Axum Graph Q L Git Hub banner"
+/>
 
 <p align="center">
-  <a aria-label="Open Rodney Lab site" href="https://rodneylab.com" rel="nofollow no:w
-  opener noreferrer">
-    <img alt="Rodney Lab logo" src="https://rodneylab.com/assets/icon.png" width="60" />
+  <a
+    aria-label="Open Rodney Lab site"
+    href="https://rodneylab.com"
+    rel="nofollow no:w
+  opener noreferrer"
+  >
+    <img
+      alt="Rodney Lab logo"
+      src="https://rodneylab.com/assets/icon.png"
+      width="60"
+    />
   </a>
 </p>
-<h1 align="center">
-  axum-graphql
-</h1>
+<h1 align="center">axum-graphql</h1>
 
 [![codecov](https://codecov.io/gh/rodneylab/axum-graphql/branch/main/graph/badge.svg?token=V9UQLFTRCJ)](https://codecov.io/gh/rodneylab/axum-graphql)
+[![Ask DeepWiki](https://deepwiki.com/badge.svg)](https://deepwiki.com/rodneylab/axum-graphql)
 
 ## Introduction
 
-**Rust GraphQL demo/test API written in Rust, using Axum for routing, async-graphql and SQLx.**
+**Rust GraphQL demo/test API written in Rust, using Axum for routing,\
+async-graphql and SQLx.**
 
 For Rust developers building a GraphQL API, considering using Axum and
 async-graphql.
@@ -22,9 +33,11 @@ async-graphql.
 APIs are minimal and represent a blog site back-end, with GraphQL queries to
 create and delete draft posts, as well as, publish them.
 
-The app is based on [How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](#acknowledgements), updated to use Axum 0.8. It also
-has more extensive observability, implemented using OpenTelemetry. Data are
-pushed from the app to an OpenTelemetry collector, which in turn:
+The app is based on
+[How to Build a Powerful GraphQL API with Rust by Oliver Jumpertz](#acknowledgements),
+updated to use Axum 0.8. It also has more extensive observability, implemented
+using OpenTelemetry. Data are pushed from the app to an OpenTelemetry collector,
+which in turn:
 
 - has a Prometheus metrics endpoint;
 - pushes traces to a Jaeger collector, which exposes a Jaeger Query UI endpoint;
@@ -36,7 +49,10 @@ get spun up via [`docker-compose`](./docker-compose.yml). Additionally, the
 docker-compose configuration initialises a Grafana session (collecting all
 previously mentioned observability components into a single interface).
 
-<img src="./images/architecture.png" alt="App architecture shows the App at the centre, with connections to the Graph Q L Playground, Graph Q L A P I and S Q Lite Database.  There is a connection pointing downwards from the App, which connects to the otel Collector.  The otel Collector has edges leaving it, point to Prometheus, Jaeger Collector and Loki.  The last three all have connections that terminate in the Grafana node." />
+<img
+  src="./images/architecture.png"
+  alt="App architecture shows the App at the centre, with connections to the Graph Q L Playground, Graph Q L A P I and S Q Lite Database.  There is a connection pointing downwards from the App, which connects to the otel Collector.  The otel Collector has edges leaving it, point to Prometheus, Jaeger Collector and Loki.  The last three all have connections that terminate in the Grafana node."
+/>
 
 ## Contents
 
@@ -64,7 +80,10 @@ Requires:
 - Rust 1.86 toolchain or newer; and
 - docker-compose.
 
-<img src="./images/usage.gif" alt="Terminal animation shows the user entering the following command: cargo run. Then the code compiles and server starts.  Status messages inform that Metrics service is listening on 127.0.0.1:8001, Migrations were run successfully, and Main app service is listening on 127.0.0.1:8000" />
+<img
+  src="./images/usage.gif"
+  alt="Terminal animation shows the user entering the following command: cargo run. Then the code compiles and server starts.  Status messages inform that Metrics service is listening on 127.0.0.1:8001, Migrations were run successfully, and Main app service is listening on 127.0.0.1:8000"
+/>
 
 1. Clone this repo and change into the new directory.
 
@@ -97,9 +116,12 @@ The project database migrations create an SQLite database with a Post table,
 which has `id`, `title`, `body` and `published` fields. You can run GraphQL
 queries to create, read, update and delete from this table.
 
-<img src="./images/axum-graphql-sqlite-db-post-table.png" alt="Diagram representing database table.  The heading reads `Post`.  Below, the table columns, with associated type is listed: id (integer), title (text), body (text) and published (boolean).  A key icon appears within in the id column data, indicating id is a database primary key." />
+<img
+  src="./images/axum-graphql-sqlite-db-post-table.png"
+  alt="Diagram representing database table.  The heading reads `Post`.  Below, the table columns, with associated type is listed: id (integer), title (text), body (text) and published (boolean).  A key icon appears within in the id column data, indicating id is a database primary key."
+/>
 
-#### Example queries:
+#### Example queries
 
 - Hello world:
 
@@ -156,13 +178,13 @@ query DraftsQuery {
 
 ## App and Observability Endpoints
 
-GraphQL Playground: http://localhost:8000/
+GraphQL Playground: <http://localhost:8000/>
 
-Metrics raw output: http://localhost:8889/metrics
+Metrics raw output: <http://localhost:8889/metrics>
 
-Jaeger Query UI: http://localhost:16686/search
+Jaeger Query UI: <http://localhost:16686/search>
 
-Grafana: http://localhost:3000/
+Grafana: <http://localhost:3000/>
 
 ## What's inside?
 
@@ -172,7 +194,7 @@ The tracing service is provided via the OpenTelemetry Collector, Jaeger Query UI
 and a [Cassandra database](https://cassandra.apache.org/_/index.html), all
 running in Docker. Docker also spins up a Cassandra database for storing traces.
 
-### SQLite Database
+### SQLite Database Files
 
 The API uses an SQLite single-file database for simplicity, at
 [`sqlite.db`](./sqlite.db). This is automatically created (if it does not yet
@@ -198,7 +220,9 @@ GraphQL API with observability features.
     - [SQLx docs](https://docs.rs/sqlx/latest/sqlx/);
     - [SQLx examples](https://github.com/launchbadge/sqlx/tree/main/examples); and
     - [Rust SQLx basics with SQLite: super easy how-to](https://tms-dev-blog.com/rust-sqlx-basics-with-sqlite/).
-  - For a general introduction to building a web-based API in Rust, [Zero to Production in Rust](https://www.zero2prod.com/index.html) is marvellous.
+  - For a general introduction to building a web-based API in Rust,
+    [Zero to Production in Rust](https://www.zero2prod.com/index.html) is
+    marvellous.
 
 ## ☎️ Issues and Support
 
@@ -215,15 +239,18 @@ much time on more involved additions.
 
 ### Contributing guidelines
 
-- Before working on a new feature it's preferable to submit a feature request first and state that you'd like to implement it yourself
-- Please don't submit PRs for feature requests that are either in the roadmap<sup>[1]</sup>, backlog<sup>[2]</sup> or icebox<sup>[3]</sup>
+- Before working on a new feature it's preferable to submit a feature request
+  first and state that you'd like to implement it yourself
+- Please don't submit PRs for feature requests that are either in the
+  roadmap<sup>[1]</sup>, backlog<sup>[2]</sup> or icebox<sup>[3]</sup>
 - Avoid introducing new dependencies
 - Avoid making backwards-incompatible configuration changes
 
 <details>
 <summary><strong><sup>[1] [2] [3]</sup></strong></summary>
 
-[1] The feature likely already has work put into it that may conflict with your implementation
+[1] The feature likely already has work put into it that may conflict with your
+implementation
 
 [2] The demand, implementation or functionality for this feature is not yet clear
 
@@ -240,4 +267,5 @@ Inspired by:
 
 ## License
 
-The project is released under the BSD 3-Clause License — see the [LICENSE](./LICENSE) file for details.
+The project is released under the BSD 3-Clause License — see the
+[LICENSE](./LICENSE) file for details.
