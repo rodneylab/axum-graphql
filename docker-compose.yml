@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.149.0@sha256:0fba96233274f6d665ac8831ad99dfe6479a9a20459f6e2719c0d20945773b46
+    image: otel/opentelemetry-collector-contrib:0.150.1@sha256:a516c26968aa1feb5e5fc0562e3338ea13755cb4f373603226bcc4e276374ad0
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -33,7 +33,7 @@ services:
     depends_on:
       - cassandra-schema
   cassandra:
-    image: cassandra:5.0.7@sha256:1adee7ef220ce93aa1c06ba042ac80d6aca90ee8c3268cc2971120fa6fb64b0a
+    image: cassandra:5.0.8@sha256:ede1decb2dd2dd8f2bb58ea21d981ee2d42bece44a7ca0dd70d1aa3fcee8bc64
   cassandra-schema:
     image: jaegertracing/jaeger-cassandra-schema:2.17.0@sha256:bc5b40b01ded28bc8a2e2eb8f5a7f0c4380e3171564b7d003be70cfbda662cf0
     depends_on:
@@ -50,7 +50,7 @@ services:
     depends_on:
       - cassandra-schema
   prometheus:
-    image: prom/prometheus:v3.11.2@sha256:5550dc63da361dc30f6fe02ac0e4dfc736ededfef3c8d12a634db04a67824d78
+    image: prom/prometheus:v3.11.3@sha256:e4254400b85610324913f0dc4acf92603d9984e7519414c5a12811aa6146acc3
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
@@ -66,7 +66,7 @@ services:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:12.4.2@sha256:83749231c3835e390a3144e5e940203e42b9589761f20ef3169c716e734ad505
+    image: grafana/grafana:13.0.1@sha256:0f86bada30d65ef9d0183b90c1e2682ac92d53d95da8bed322b984ea78a4a73a
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
