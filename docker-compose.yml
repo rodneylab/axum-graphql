@@ -1,6 +1,6 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.150.1@sha256:a516c26968aa1feb5e5fc0562e3338ea13755cb4f373603226bcc4e276374ad0
+    image: otel/opentelemetry-collector-contrib:0.151.0@sha256:d57bfe8eee2378f31cb1193239fbcac521d54a5a071fca2bfc106916a32b892d
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
@@ -33,7 +33,7 @@ services:
     depends_on:
       - cassandra-schema
   cassandra:
-    image: cassandra:5.0.8@sha256:ede1decb2dd2dd8f2bb58ea21d981ee2d42bece44a7ca0dd70d1aa3fcee8bc64
+    image: cassandra:5.0.8@sha256:0e4d8e9cafdb9b03e9b0f754dcc6266c67334b7ea4d99eacfcd0711438a8a6f5
   cassandra-schema:
     image: jaegertracing/jaeger-cassandra-schema:2.17.0@sha256:bc5b40b01ded28bc8a2e2eb8f5a7f0c4380e3171564b7d003be70cfbda662cf0
     depends_on:
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning
   pyrra-api:
-    image: ghcr.io/pyrra-dev/pyrra:v0.9.5@sha256:4382ed184a02e3d30bfea94c504e9e6eac333426478b255218dd23fb73e0a5c2
+    image: ghcr.io/pyrra-dev/pyrra:v0.10.0@sha256:e0c1300c32ec80790655de721d436af5594c1298c4a4fc5da211d6303c40c844
     container_name: pyrra_api
     restart: always
     command:
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.9.5@sha256:4382ed184a02e3d30bfea94c504e9e6eac333426478b255218dd23fb73e0a5c2
+    image: ghcr.io/pyrra-dev/pyrra:v0.10.0@sha256:e0c1300c32ec80790655de721d436af5594c1298c4a4fc5da211d6303c40c844
     user: root
     container_name: pyrra_filesystem
     restart: always
