@@ -22,7 +22,7 @@ jobs:
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get install sqlite3 -y
       - name: Cache sqlx-cli
-        uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
+        uses: actions/cache@27d5ce7f107fe9357f9df03efb73ab90386fccae # v5.0.5
         id: cache-sqlx
         with:
           path: ~/.cargo/bin/sqlx ~/.cargo/bin/cargo-sqlx
