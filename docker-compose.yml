@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.8@sha256:2c6576f9b8e0271d3d30a4142e3a79cd69d60fa1e5ecf32dc641a352d372e9ff
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:2.17.0@sha256:bc5b40b01ded28bc8a2e2eb8f5a7f0c4380e3171564b7d003be70cfbda662cf0
+    image: jaegertracing/jaeger-cassandra-schema:2.18.0@sha256:bef7c8b7836bbd09d210a53dcc9ac0185e26f4c710f9456757a59a44c2103690
     depends_on:
       - cassandra
   jaeger-query:
@@ -59,7 +59,7 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.7.1@sha256:73e905b51a7f917f7a1075e4be68759df30226e03dcb3cd2213b989cc0dc8eb4
+    image: grafana/loki:3.7.2@sha256:191d4fdfb7264f16989f0a57f320872620a5a7c2ceeec6229212c4190ec49b86
     ports:
       - "3100:3100"
     volumes:
