@@ -3,6 +3,7 @@
 .cache
 .env
 .lycheecache
+.opencode
 /assets
 /target
 rusty-tags.vi
