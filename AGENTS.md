@@ -48,12 +48,12 @@ Pre-commit hooks run: fmt, cargo-check, clippy, cargo-deny, typos, gitleaks, yam
 
 ## Endpoints
 
-| Service | URL |
-|---------|-----|
-| GraphQL Playground | http://localhost:8000 |
-| Metrics | http://localhost:8889/metrics |
-| Jaeger Query | http://localhost:16686/search |
-| Grafana | http://localhost:3000 |
+| Service            | URL                           |
+| ------------------ | ----------------------------- |
+| GraphQL Playground | http://localhost:8000         |
+| Metrics            | http://localhost:8889/metrics |
+| Jaeger Query       | http://localhost:16686/search |
+| Grafana            | http://localhost:3000         |
 
 ## Architecture
 
