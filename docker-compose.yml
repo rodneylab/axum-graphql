@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.8@sha256:2c6576f9b8e0271d3d30a4142e3a79cd69d60fa1e5ecf32dc641a352d372e9ff
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:2.18.0@sha256:bef7c8b7836bbd09d210a53dcc9ac0185e26f4c710f9456757a59a44c2103690
+    image: jaegertracing/jaeger-cassandra-schema:2.19.0@sha256:b0115ed9db822de8b2df41d88a8059356df021aa385994eb0d6c986c750bc5af
     depends_on:
       - cassandra
   jaeger-query:
