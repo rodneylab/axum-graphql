@@ -36,7 +36,7 @@ insta-snapshot-review:
 
 # check links are valid
 linkcheck:
-    lychee --cache --max-cache-age 1d --exclude-path "deny.toml" . "**/*.toml" "**/*.rs" "**/*.yml"
+    lychee --cache --max-cache-age 1d --base-url https://github.com/rodneylab/axum-graphql/ --root-dir . --exclude-path "deny.toml" . "**/*.toml" "**/*.rs" "**/*.yml" --verbose
 
 # copy URL for Rust std docs to clipboard
 std:
