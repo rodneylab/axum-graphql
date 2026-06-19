@@ -19,3 +19,5 @@ http://prometheus:9090/
 http://pyrra-filesystem:9444/
 https://fonts\.googleapis\.com/css
 memory$
+https://github.com/rodneylab/axum-graphql/sqlite.db
+sqlite://:memory
