@@ -1,0 +1,9 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["eslint", "oxc", "promise", "typescript", "unicorn", "vitest"],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "extends": []
+}

@@ -9,3 +9,4 @@
 rusty-tags.vi
 sqlite.db*
 video.tape
+/node_modules

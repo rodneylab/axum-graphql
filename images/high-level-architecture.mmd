@@ -1,0 +1,28 @@
+architecture-beta
+    group client(internet)["Client Space"]
+        service graphql_playground(logos:graphql)["GraphQL Playground / Client"] in client
+
+    group observability(server)["Observability Stack (Docker)"]
+        service otel_exporter(logos:opentelemetry-icon)[OTLP Exporter] in observability
+        service otel_collector(logos:opentelemetry-icon)[otel Collector] in observability
+        service jaeger_collector(logos:gopher)["Jaeger Collector (Traces)"] in observability
+        service prometheus(logos:prometheus)["Prometheus (Metrics)"] in observability
+        service loki(logos:terminal)["Loki (Logs)"] in observability
+
+    group application(server)["Application Space"]
+        service router(server)[Axum Router] in application
+        service graphql_handler(logos:graphql)["GraphQL Handler"] in application
+        service model(database)["Domain Data Model"] in application
+
+    group persistence(database)["Persistence"]
+        service sqlite_db(logos:sqlite)["SQLite DB (File)"] in persistence
+
+    router:R <-- L: graphql_playground
+    otel_exporter:R <-- L:router
+    otel_exporter:B --> T:otel_collector
+    otel_collector:L --> R:prometheus
+    loki:L <-- R:otel_collector
+    jaeger_collector:T <-- B:otel_collector
+    router:B --> T:graphql_handler
+    graphql_handler:B --> T:model
+    model:R --> L:sqlite_db
