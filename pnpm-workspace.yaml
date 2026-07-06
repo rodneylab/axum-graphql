@@ -1,0 +1,7 @@
+allowBuilds:
+  esbuild: true
+  puppeteer: true
+blockExoticSubdeps: true
+minimumReleaseAge: 43200
+strictDepBuilds: true
+trustPolicy: no-downgrade

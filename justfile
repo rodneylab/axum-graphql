@@ -52,3 +52,7 @@ trycmd-snapshot-dump:
 trycmd-snapshot-overwrite:
     cargo build
     TRYCMD=overwrite cargo test
+
+# generate architecture diagram SVG
+generate-mermaid-svg:
+    pnpm vite-node scripts/generate-mermaid-svg.ts

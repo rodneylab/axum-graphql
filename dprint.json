@@ -2,7 +2,11 @@
   "json": {},
   "markdown": {},
   "toml": {},
-  "excludes": ["**/*-lock.json", "supply-chain/audits.toml", "supply-chain/config.toml"],
+  "excludes": [
+    "**/*-lock.json",
+    "supply-chain/audits.toml",
+    "supply-chain/config.toml"
+  ],
   "plugins": [
     "https://plugins.dprint.dev/dockerfile-0.3.2.wasm",
     "https://plugins.dprint.dev/json-0.22.0.wasm",
