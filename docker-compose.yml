@@ -1,10 +1,10 @@
 services:
   otel-collector:
-    image: otel/opentelemetry-collector-contrib:0.154.0@sha256:b3079f45e19bdb7326bf49cdddce6cf60dfd865138db39f2733ea48ab17bc4cb
+    image: otel/opentelemetry-collector-contrib:0.155.0@sha256:4935caa35e9a4cb387e35732e8fb22b2b5759af8d12e7043357f03837f6e8df5
     volumes:
       - ./otel-collector-config.yaml:/etc/otel/config.yaml
     command:
-      - '--config=/etc/otel/config.yaml'
+      - "--config=/etc/otel/config.yaml"
     ports:
       - 1888:1888 # pprof extension
       - 8888:8888 # Prometheus metrics exposed by the Collector
@@ -27,8 +27,8 @@ services:
     environment:
       - SAMPLING_CONFIG_TYPE=adaptive
     ports:
-      - '4317'
-      - '4318'
+      - "4317"
+      - "4318"
     restart: on-failure
     depends_on:
       - cassandra-schema
@@ -44,13 +44,13 @@ services:
       - "--cassandra.keyspace=jaeger_v1_dc1"
       - "--cassandra.servers=cassandra"
     ports:
-      - '16686:16686'
-      - '16687:16687'
+      - "16686:16686"
+      - "16687:16687"
     restart: on-failure
     depends_on:
       - cassandra-schema
   prometheus:
-    image: prom/prometheus:v3.12.0@sha256:69f5241418838263316593f7274a304b095c40bcf22e57272865da91bd60a8ac
+    image: prom/prometheus:v3.13.0@sha256:c6b27ea434f8389bfe233fbc7be381cf50587c286e871bc842008f5a1b1908a7
     volumes:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
@@ -59,14 +59,14 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.7.2@sha256:191d4fdfb7264f16989f0a57f320872620a5a7c2ceeec6229212c4190ec49b86
+    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
     ports:
       - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:13.0.2@sha256:5dad0df181cb644a14e13617b913b261a54f7d4fd4510721dba420929f35bea2
+    image: grafana/grafana:13.1.0@sha256:121a7a9ece6dc10b969f1f96eed64b4f07dfac0d0b8abc070f7cb83bbde86f63
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning
   pyrra-api:
-    image: ghcr.io/pyrra-dev/pyrra:v0.10.0@sha256:e0c1300c32ec80790655de721d436af5594c1298c4a4fc5da211d6303c40c844
+    image: ghcr.io/pyrra-dev/pyrra:v0.10.1@sha256:c0a1692c7aeb3ee2141fbb8ee5e7be739c0b4601a8d81256469ec80ec5a14107
     container_name: pyrra_api
     restart: always
     command:
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.10.0@sha256:e0c1300c32ec80790655de721d436af5594c1298c4a4fc5da211d6303c40c844
+    image: ghcr.io/pyrra-dev/pyrra:v0.10.1@sha256:c0a1692c7aeb3ee2141fbb8ee5e7be739c0b4601a8d81256469ec80ec5a14107
     user: root
     container_name: pyrra_filesystem
     restart: always
