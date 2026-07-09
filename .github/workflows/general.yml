@@ -10,7 +10,7 @@ on:
 permissions: read-all
 env:
   CARGO_TERM_COLOR: always
-  RUST_TOOLCHAIN: 1.89
+  RUST_TOOLCHAIN: 1.96.1
   RUSTFLAGS: "-Dwarnings -Cinstrument-coverage"
   LLVM_PROFILE_FILE: "axum_graphql-%p-%m.profraw"
   SQLX_VERSION: 0.8.6
@@ -111,7 +111,7 @@ jobs:
       - name: Install Linux Dependencies
         run: sudo apt-get update
       - name: Install beta
-        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        uses: dtolnay/rust-toolchain@4be7066ada62dd38de10e7b70166bc74ed198c30 # stable
         with:
           toolchain: beta
       - name: cargo beta check
@@ -120,7 +120,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        msrv: ["1.86.0"]
+        msrv: ["1.94.0"]
     name: ubuntu / ${{ matrix.msrv }}
     steps:
       - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
