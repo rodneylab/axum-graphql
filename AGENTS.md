@@ -24,12 +24,16 @@ cargo run
   cargo sqlx prepare --check -- --bin axum-graphql  # Verify .sqlx cache
   ```
 - **After changing queries**: Update `.sqlx/` cache with `cargo sqlx prepare`
+- **When adding or modifying migrations**: Run `cargo sqlx prepare` to refresh
+  the query cache after migrations are applied.
 
 ## Testing
 
 - All tests use in-memory SQLite (`sqlite://:memory:`)
 - Tests are integration tests in `tests/api/`
 - Run tests: `cargo test`
+- **Running a single test**: `cargo test --test <test_name>` (
+  `cargo test --test api::users_get`, for example)
 - Snapshot review: `cargo insta review`
 
 ## Linting & Formatting
@@ -39,11 +43,12 @@ cargo fmt --check
 cargo clippy -- -D warnings
 ```
 
-Pre-commit hooks run: fmt, cargo-check, clippy, cargo-deny, typos, gitleaks, yamlfmt
+Pre-commit hooks run: fmt, cargo-check, clippy, cargo-deny, typos,
+gitleaks, yamlfmt
 
 ## Toolchain
 
-- **Rust**: 1.95.0 (toolchain file), MSRV: 1.86.0
+- **Rust**: 1.96.1 (toolchain file), MSRV: 1.94.0
 - **Components**: clippy, llvm-tools-preview, rustfmt
 
 ## Endpoints
@@ -70,3 +75,8 @@ just coverage     # Generate coverage report with grcov
 just comments     # Find TODOs/comments in Rust source
 just expects      # Find .expect() and .unwrap() calls
 ```
+
+Key shortcuts:
+
+- `just` – lists all available shortcut commands (`coverage`, `comments`,
+  `expects`, etc.).
