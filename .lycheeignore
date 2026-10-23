@@ -18,6 +18,12 @@ http://loki:3100/
 http://prometheus:9090/
 http://pyrra-filesystem:9444/
 https://fonts\.googleapis\.com/css
-memory$
+https://github.com/rodneylab/axum-graphql/LICENSE
+https://github.com/rodneylab/axum-graphql/docker-compose.yml
+https://github.com/rodneylab/axum-graphql/images/architecture.png
+https://github.com/rodneylab/axum-graphql/images/axum-graphql-sqlite-db-post-table.png
+https://github.com/rodneylab/axum-graphql/images/rodneylab-github-axum-graphql.png
+https://github.com/rodneylab/axum-graphql/images/usage.gif
 https://github.com/rodneylab/axum-graphql/sqlite.db
+memory$
 sqlite://:memory
