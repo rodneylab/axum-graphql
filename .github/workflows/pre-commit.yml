@@ -7,14 +7,14 @@ env:
   SQLX_FEATURES: "rustls,sqlite"
 jobs:
   prek:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@9af89fc71515a100421586dfdb3dc9c984fbf411 # v2.19.4
+        uses: step-security/harden-runner@dc2769abcc0fcfbadfc1df54081c1608579ef6b2 # v2.22.2
         with:
           egress-policy: audit
           disable-telemetry: true
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get install sqlite3 -y
       - name: Cache sqlx-cli
@@ -28,15 +28,17 @@ jobs:
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
       - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@924ae3a1cded613372ab5595356fb5720e22ba16 # v6.5.0
+      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
         with:
           go-version: '>=1.18.0'
       - name: Migrate database
         run: ./scripts/init_db.sh
       - name: Check sqlx-data.json is up-to-date
         run: cargo sqlx prepare --check -- --bin axum-graphql
-      - uses: j178/prek-action@e98a699c41eb69ab013a45817a0406469a748f8d # v2.0.5
+      - uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
         env:
           SKIP: no-commit-to-branch

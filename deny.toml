@@ -23,7 +23,6 @@
 # dependencies not shared by any other crates, would be ignored, as the target
 # list here is effectively saying which targets you are building for.
 targets = [
-
   # The triple can be any string, but only the target triples built in to
   # rustc (as of 1.40) can be checked against actual config expressions
   # "x86_64-unknown-linux-musl",
@@ -140,7 +139,6 @@ ignore = false
 # is only published to private registries, and ignore is true, the crate will
 # not have its license(s) checked
 registries = [
-
   # "https://sekretz.com/registry
 ]
 
@@ -168,13 +166,11 @@ workspace-default-features = "allow"
 external-default-features = "allow"
 # List of crates that are allowed. Use with care!
 allow = [
-
   # "ansi_term@0.11.0",
   # { crate = "ansi_term@0.11.0", reason = "you can specify a reason it is allowed" },
 ]
 # List of crates to deny
 deny = [
-
   # "ansi_term@0.11.0",
   # { crate = "ansi_term@0.11.0", reason = "you can specify a reason it is banned" },
   # Wrapper crates can optionally be specified to allow the crate when it
@@ -207,7 +203,6 @@ deny = [
 
 # Certain crates/versions that will be skipped when doing duplicate detection.
 skip = [
-
   # "ansi_term@0.11.0",
   # { crate = "ansi_term@0.11.0", reason = "you can specify a reason why it can't be updated/removed" },
 ]
@@ -216,7 +211,6 @@ skip = [
 # dependencies starting at the specified crate, up to a certain depth, which is
 # by default infinite.
 skip-tree = [
-
   # "ansi_term@0.11.0", # will be skipped along with _all_ of its direct and transitive dependencies
   # { crate = "ansi_term@0.11.0", depth = 20 },
 ]
