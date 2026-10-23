@@ -89,7 +89,7 @@ pub fn get_opentelemetry_config_from_env() -> OpenTelemetryConfig {
 
 pub fn get_resource(config: &OpenTelemetryConfig) -> Resource {
     static RESOURCE: OnceLock<Resource> = OnceLock::new();
-    let instance_id = Ulid::new().to_string();
+    let instance_id = Ulid::generate().to_string();
 
     RESOURCE
         .get_or_init(|| {
