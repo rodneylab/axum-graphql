@@ -35,7 +35,7 @@ services:
   cassandra:
     image: cassandra:5.0.8@sha256:2c6576f9b8e0271d3d30a4142e3a79cd69d60fa1e5ecf32dc641a352d372e9ff
   cassandra-schema:
-    image: jaegertracing/jaeger-cassandra-schema:2.19.0@sha256:b0115ed9db822de8b2df41d88a8059356df021aa385994eb0d6c986c750bc5af
+    image: jaegertracing/jaeger-cassandra-schema:2.22.0@sha256:f3549cb8e194d0e0deb02f8fd481117a243a5a692a033af9e4ba4f21c66b8ee7
     depends_on:
       - cassandra
   jaeger-query:
@@ -59,14 +59,14 @@ services:
     ports:
       - "9090:9090"
   loki:
-    image: grafana/loki:3.7.3@sha256:70b9f699fc9bb868b62f1cfd4f787dfa50242f1fd92e6089787d5d7daea75fe8
+    image: grafana/loki:3.7.8@sha256:1107dd5274e0ada47e42472b7a7e71f3b2a2fe878878108f3e2f9e51528f0193
     ports:
       - "3100:3100"
     volumes:
       - ./loki-config.yaml:/etc/loki/local-config.yaml
     command: -config.file=/etc/loki/local-config.yaml
   grafana:
-    image: grafana/grafana:13.1.0@sha256:121a7a9ece6dc10b969f1f96eed64b4f07dfac0d0b8abc070f7cb83bbde86f63
+    image: grafana/grafana:13.2.4@sha256:dbbc38ea21103cefb50396340cd88afec779c7e070b0a7bf5a75b4ce46651d3f
     environment:
       - GF_ANALYTICS_REPORTING_ENABLED=false
       - GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
@@ -79,7 +79,7 @@ services:
     volumes:
       - ./grafana:/etc/grafana/provisioning
   pyrra-api:
-    image: ghcr.io/pyrra-dev/pyrra:v0.10.1@sha256:c0a1692c7aeb3ee2141fbb8ee5e7be739c0b4601a8d81256469ec80ec5a14107
+    image: ghcr.io/pyrra-dev/pyrra:v0.10.2@sha256:98e6674a7206bc38710bdce0c170772423e0229607224a2840a1680c28a337a8
     container_name: pyrra_api
     restart: always
     command:
@@ -90,7 +90,7 @@ services:
     ports:
       - "9099:9099"
   pyrra-filesystem:
-    image: ghcr.io/pyrra-dev/pyrra:v0.10.1@sha256:c0a1692c7aeb3ee2141fbb8ee5e7be739c0b4601a8d81256469ec80ec5a14107
+    image: ghcr.io/pyrra-dev/pyrra:v0.10.2@sha256:98e6674a7206bc38710bdce0c170772423e0229607224a2840a1680c28a337a8
     user: root
     container_name: pyrra_filesystem
     restart: always
