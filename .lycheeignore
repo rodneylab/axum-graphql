@@ -18,6 +18,7 @@ http://loki:3100/
 http://prometheus:9090/
 http://pyrra-filesystem:9444/
 https://fonts\.googleapis\.com/css
+https://github.com/assets.*
 https://github.com/rodneylab/axum-graphql/LICENSE
 https://github.com/rodneylab/axum-graphql/docker-compose.yml
 https://github.com/rodneylab/axum-graphql/images/architecture.png
