@@ -41,7 +41,7 @@ float-cmp = "0.10.0"
 futures = "0.3.34"
 http-body-util = "0.1.5"
 insta = { version = "1.49.0", features = ["glob", "json", "redactions"] }
-mime = "0.3.17"
+mime = "0.3.18"
 reqwest = { version = "0.13.5", features = ["json"] }
 serde_json = "1.0.154"
 tower = { version = "0.5.3", features = ["util"] }
