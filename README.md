@@ -77,7 +77,7 @@ previously mentioned observability components into a single interface).
 
 Requires:
 
-- Rust 1.86 toolchain or newer; and
+- Rust 1.94 toolchain or newer; and
 - docker-compose.
 
 <img
