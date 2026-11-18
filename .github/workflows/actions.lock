@@ -43,7 +43,7 @@ workflows:
         - 'step-security/harden-runner@v2.22.4'
     '.github/workflows/validate-licenses.yml':
         - 'actions/checkout@v7.0.1'
-        - 'embarkstudios/cargo-deny-action@v2.1.1'
+        - 'embarkstudios/cargo-deny-action@v2.1.2'
         - 'step-security/harden-runner@v2.22.4'
 dependencies:
     'actions/cache@caa296126883cff596d87d8935842f9db880ef25':
@@ -115,9 +115,9 @@ dependencies:
         commit: 'sha1-39008827e6b4319a349e9a42dfc90579dd25f1ca'
         owner_id: 1940490
         repo_id: 260749683
-    'embarkstudios/cargo-deny-action@v2.1.1':
-        ref: 'v2.1.1'
-        commit: 'sha1-3c6349835b2b7b196a839186cb8b78e02f7b5f25'
+    'embarkstudios/cargo-deny-action@v2.1.2':
+        ref: 'v2.1.2'
+        commit: 'sha1-70f81531115945ba6eb6b941ec9d39d063438eb9'
         owner_id: 44887257
         repo_id: 228054692
     'github/codeql-action@v4.39.3':
