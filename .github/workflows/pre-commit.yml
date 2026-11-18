@@ -1,9 +1,10 @@
 name: Prek checks
 on: [push, pull_request]
-permissions:
-  contents: read
+permissions: {}
 jobs:
   prek:
+    permissions:
+      contents: read
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner

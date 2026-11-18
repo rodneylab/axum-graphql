@@ -8,10 +8,11 @@
 # Source repository: https://github.com/actions/dependency-review-action
 name: 'Dependency Review'
 on: [pull_request]
-permissions:
-  contents: read
+permissions: {}
 jobs:
   dependency-review:
+    permissions:
+      contents: read
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
