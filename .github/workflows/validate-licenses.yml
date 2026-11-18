@@ -1,10 +1,11 @@
 name: Cargo Deny
 on: [push, pull_request]
-permissions:
-  contents: read
+permissions: {}
 jobs:
   cargo-deny:
-    runs-on: ubuntu-24.04
+    permissions:
+      contents: read
+    runs-on: ubuntu-26.04
     strategy:
       matrix:
         checks:

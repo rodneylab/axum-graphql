@@ -2,10 +2,11 @@ name: Security audit
 on:
   schedule:
     - cron: '22 7 * * *'
-permissions:
-  contents: read
+permissions: {}
 jobs:
   audit:
+    permissions:
+      contents: read
     runs-on: ubuntu-26.04
     steps:
       - uses: actions/checkout@v7.0.1
