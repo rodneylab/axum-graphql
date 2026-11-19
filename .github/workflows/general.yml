@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
           disable-telemetry: true
@@ -39,7 +39,7 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
           disable-telemetry: true
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
       - uses: actions/checkout@v7.0.1
@@ -72,7 +72,7 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
           disable-telemetry: true
@@ -111,7 +111,7 @@ jobs:
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
           disable-telemetry: true
