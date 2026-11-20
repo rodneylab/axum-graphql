@@ -9,25 +9,25 @@ workflows:
     '.github/workflows/dependency-review.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/dependency-review-action@v5.0.1'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/general.yml':
         - 'actions/checkout@v7.0.1'
         - 'bnjbvr/cargo-machete@v0.10.1'
         - 'codecov/codecov-action@v7.1.1'
         - 'dprint/check@v2.6'
         - 'dtolnay/rust-toolchain@stable'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/links.yml':
         - 'actions/cache@v6.1.0'
         - 'actions/checkout@v7.0.1'
         - 'lycheeverse/lychee-action@v2.9.0'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/pre-commit.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/setup-go@v7.1.0'
         - 'actions/setup-python@v7.1.0'
         - 'j178/prek-action@v3.1.1'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/scheduled-audit.yml':
         - 'actions/checkout@v7.0.1'
         - 'rustsec/audit-check@main'
@@ -36,15 +36,15 @@ workflows:
         - 'actions/upload-artifact@v7.0.2'
         - 'github/codeql-action@v4.39.3'
         - 'ossf/scorecard-action@v2.5.0'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/typos.yml':
         - 'actions/checkout@v7.0.1'
         - 'crate-ci/typos@v1.52.2'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/validate-licenses.yml':
         - 'actions/checkout@v7.0.1'
         - 'embarkstudios/cargo-deny-action@v2.1.2'
-        - 'step-security/harden-runner@v2.22.4'
+        - 'step-security/harden-runner@v2.23.0'
 dependencies:
     'actions/cache@caa296126883cff596d87d8935842f9db880ef25':
         ref: 'v5.1.0'
@@ -145,8 +145,8 @@ dependencies:
         commit: 'sha1-858dc40f52ca2b8570b7a997c1c4e35c6fc9a432'
         owner_id: 25397242
         repo_id: 523199201
-    'step-security/harden-runner@v2.22.4':
-        ref: 'v2.22.4'
-        commit: 'sha1-1d88384fd173af6ecb012dfd0264a306b711241a'
+    'step-security/harden-runner@v2.23.0':
+        ref: 'v2.23.0'
+        commit: 'sha1-aebdcf6156ab6691adf63218240e476564a1ed4c'
         owner_id: 88700172
         repo_id: 422287306
