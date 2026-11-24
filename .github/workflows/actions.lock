@@ -34,7 +34,7 @@ workflows:
     '.github/workflows/scorecard.yml':
         - 'actions/checkout@v7.0.1'
         - 'actions/upload-artifact@v7.0.2'
-        - 'github/codeql-action@v4.39.3'
+        - 'github/codeql-action@v4.39.4'
         - 'ossf/scorecard-action@v2.6.0'
         - 'step-security/harden-runner@v2.23.0'
     '.github/workflows/typos.yml':
@@ -120,9 +120,9 @@ dependencies:
         commit: 'sha1-70f81531115945ba6eb6b941ec9d39d063438eb9'
         owner_id: 44887257
         repo_id: 228054692
-    'github/codeql-action@v4.39.3':
-        ref: 'v4.39.3'
-        commit: 'sha1-33d7b85da1a04171e211befe2c739303b9a4c066'
+    'github/codeql-action@v4.39.4':
+        ref: 'v4.39.4'
+        commit: 'sha1-1bd86f2fdb4b86187fa4059f16f31a3202acc9ea'
         owner_id: 9919
         repo_id: 259445878
     'j178/prek-action@v3.1.1':
