@@ -1,43 +1,43 @@
 name: Prek checks
 on: [push, pull_request]
-permissions:
-  contents: read
+permissions: {}
 env:
-  SQLX_VERSION: 0.8.2
+  SQLX_VERSION: 0.9.1
   SQLX_FEATURES: "rustls,sqlite"
 jobs:
   prek:
+    permissions:
+      contents: read
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
           disable-telemetry: true
-      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get install sqlite3 -y
       - name: Cache sqlx-cli
-        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        uses: actions/cache@v6.1.0
         id: cache-sqlx
         with:
           path: ~/.cargo/bin/sqlx ~/.cargo/bin/cargo-sqlx
           key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
-      - uses: dtolnay/rust-toolchain@b725eda525362e7cf34af9a7243cac1e3f01a7ec # stable
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
+      - uses: dtolnay/rust-toolchain@stable
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
-      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+      - uses: actions/setup-python@v7.1.0
         with:
           python-version: '3.13'
-      - uses: actions/setup-go@b7ad1dad31e06c5925ef5d2fc7ad053ef454303e # v7.0.0
+      - uses: actions/setup-go@v7.1.0
         with:
           go-version: '>=1.18.0'
-      - name: Migrate database
-        run: ./scripts/init_db.sh
-      - name: Check sqlx-data.json is up-to-date
-        run: cargo sqlx prepare --check -- --bin axum-graphql
-      - uses: j178/prek-action@44924fe9ef4a6f88253c4b6b1bf11c689d3ce53d # v3.1.0
+      - name: Migrate database and check sqlx-data.json is up-to-date
+        run: ./scripts/init_db.sh && cargo sqlx prepare --check --database-url sqlite://sqlite.db -- --bin axum-graphql
+      - uses: j178/prek-action@v3.1.1
         env:
           SKIP: no-commit-to-branch

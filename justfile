@@ -42,6 +42,14 @@ linkcheck:
 std:
     @rustup doc --std --path | pbcopy
 
+# migrate the SQLite database
+db-migrate:
+    sqlx migrate run
+
+# update cached sqlx query metadata
+db-prepare:
+    sqlx prepare
+
 # dump trycmd snapshots (for review and cop)
 trycmd-snapshot-dump:
     cargo build
