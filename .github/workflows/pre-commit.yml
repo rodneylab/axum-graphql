@@ -15,9 +15,6 @@ jobs:
         with:
           egress-policy: audit
           disable-telemetry: true
-      - uses: actions/checkout@v7.0.1
-        with:
-          persist-credentials: false
       - name: Install Linux Dependencies
         run: sudo apt-get update && sudo apt-get install sqlite3 -y
       - name: Cache sqlx-cli
@@ -26,6 +23,9 @@ jobs:
         with:
           path: ~/.cargo/bin/sqlx ~/.cargo/bin/cargo-sqlx
           key: ${{ runner.os }}-sqlx-${{ env.SQLX_VERSION }}
+      - uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - uses: dtolnay/rust-toolchain@stable
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
@@ -36,10 +36,8 @@ jobs:
       - uses: actions/setup-go@v7.1.0
         with:
           go-version: '>=1.18.0'
-      - name: Migrate database
-        run: ./scripts/init_db.sh
-      - name: Check sqlx-data.json is up-to-date
-        run: cargo sqlx prepare --check -- --bin axum-graphql
+      - name: Migrate database and check sqlx-data.json is up-to-date
+        run: ./scripts/init_db.sh && cargo sqlx prepare --check -- --bin axum-graphql
       - uses: j178/prek-action@v3.1.1
         env:
           SKIP: no-commit-to-branch

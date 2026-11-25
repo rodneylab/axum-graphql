@@ -44,10 +44,8 @@ jobs:
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
-      - name: Migrate database
-        run: ./scripts/init_db.sh
-      - name: Check sqlx-data.json is up-to-date
-        run: cargo sqlx prepare --check -- --bin axum-graphql
+      - name: Migrate database and check sqlx-data.json is up-to-date
+        run: ./scripts/init_db.sh && cargo sqlx prepare --check -- --bin axum-graphql
       - name: Run tests
         run: cargo test
   fmt:
@@ -113,10 +111,8 @@ jobs:
       - name: Install sqlx-cli
         if: steps.cache-sqlx.outputs.cache-hit == false
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION }} --features=${{ env.SQLX_FEATURES }} --no-default-features
-      - name: Migrate database
-        run: ./scripts/init_db.sh
-      - name: Check sqlx-data.json is up-to-date
-        run: cargo sqlx prepare --check -- --bin axum-graphql
+      - name: Migrate database and check sqlx-data.json is up-to-date
+        run: ./scripts/init_db.sh && cargo sqlx prepare --check -- --bin axum-graphql
       - name: Linting
         run: cargo clippy -- -D warnings
   beta:
@@ -186,10 +182,8 @@ jobs:
         run: cargo install sqlx-cli --force --version=${{ env.SQLX_VERSION}} --features=${{ env.SQLX_FEATURES}} --no-default-features
       - name: Install grcov
         run: cargo install grcov
-      - name: Migrate database
-        run: ./scripts/init_db.sh
-      - name: Check sqlx-data.json is up-to-date
-        run: cargo sqlx prepare --check -- --bin axum-graphql
+      - name: Migrate database and check sqlx-data.json is up-to-date
+        run: ./scripts/init_db.sh && cargo sqlx prepare --check -- --bin axum-graphql
       - name: Build
         run: cargo build
       - name: Run tests
