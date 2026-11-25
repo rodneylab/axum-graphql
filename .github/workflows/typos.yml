@@ -1,18 +1,21 @@
 name: Spell Check
 on: [pull_request]
-permissions:
-  contents: read
+permissions: {}
 jobs:
   run:
     name: Spell Check with Typos
+    permissions:
+      contents: read
     runs-on: ubuntu-26.04
     steps:
       - name: Harden Runner
-        uses: step-security/harden-runner@1d88384fd173af6ecb012dfd0264a306b711241a # v2.22.4
+        uses: step-security/harden-runner@v2.23.0
         with:
           egress-policy: audit
           disable-telemetry: true
       - name: Checkout Actions Repository
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        uses: actions/checkout@v7.0.1
+        with:
+          persist-credentials: false
       - name: Check spelling of entire workspace
-        uses: crate-ci/typos@276087d9a4f06398b3e04825487805e2d7375888 # v1.52.2
+        uses: crate-ci/typos@v1.52.2
