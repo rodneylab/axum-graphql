@@ -16,7 +16,7 @@ cargo run
 - **Migrations**: Located in `migrations/`
 - **SQLx CLI required**: Install with:
   ```bash
-  cargo install --version='~0.8' sqlx-cli --no-default-features --features rustls,sqlite
+  cargo install --version='~0.9' sqlx-cli --no-default-features --features rustls,sqlite
   ```
 - **Before running tests/linting**:
   ```bash
